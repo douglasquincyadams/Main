@@ -1,6 +1,9 @@
 
 """
 
+Source: 
+http://www.parallelpython.com/content/view/17/31/
+
 Returns True if Integer is prime and False otherwise\
 
 """
