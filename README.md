@@ -1,10 +1,13 @@
 # Main
 Everything that shouldn't be re coded in multiple places
 
-# Coding Pattern:
+## Coding Pattern:
 https://docs.google.com/document/d/1mNs6IGqrb-m3IpxDXQyCDeokYzvzV7n_nMu4jTf7p3U/edit?usp=sharing
 
-# Data Sources / Files:
+## Commit Process
+https://docs.google.com/document/d/1eYodvwxJTBZ7Wk77GiA-DhLbGZJHQEFDqnkVewT02-k/edit?usp=sharing
+
+## Data Sources / Files:
 https://drive.google.com/folderview?id=0BzalK-Lkp6OyflFYbUFGbDA2Yl9UZEVVZzJUbElwbkFhaXhLMERoN1lIWnhWQmt0RjdEMnc&usp=sharing
 
 * Fermi Data  ( Simple datacuts have been made explained in the hello world file below)
