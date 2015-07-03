@@ -1,0 +1,6 @@
+import Library_AstronomyDistanceFromEarthCmToApparentOutwardVelocityCmPerSec
+
+
+Distance_in_cm = 10**30
+ApparentOutwardVelocity = Library_AstronomyDistanceFromEarthCmToApparentOutwardVelocityCmPerSec.Main(Distance_in_cm)
+print ApparentOutwardVelocity
