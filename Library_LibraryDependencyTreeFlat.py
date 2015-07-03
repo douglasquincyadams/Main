@@ -54,7 +54,7 @@ def Main(
             #print '   Dependency', Dependency
             DependencyFileType = Dependency.split('_')[0]
 
-            if (DependencyFileType in ['Type', 'Library', 'Trash', 'Const', 'Test' ] ): #Filetypes which are allowed for inclusion
+            if (DependencyFileType in ['Type', 'Library', 'Trash', 'Const', 'Test', 'DS', 'Example' ] ): #Filetypes which are allowed for inclusion
                 if (not Dependency in FlatDependencyTree):
 
                     FlatDependencyTree = sorted( list( set(   
@@ -87,7 +87,7 @@ def Main(
 
 
 
-    python 
+
 
 
 

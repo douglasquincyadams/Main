@@ -18,9 +18,8 @@ import Library_PrintFullTestSuccess
 FullTestSuccess = True
 
 ExampleLibaryName = "Library_ExampleLibraryGood0"
-ExampleLibaryName = "Utility_AstronomyFermiEventsSkyMapGalaxyGroupsAndPointSourcesMask"
-
-ExampleLibaryName = 'Library_Gaussian'
+#ExampleLibaryName = "Utility_AstronomyFermiEventsSkyMapGalaxyGroupsAndPointSourcesMask"
+#ExampleLibaryName = 'Library_Gaussian'
 
 DependencyTree = Library_LibraryDependencyTreeFlat.Main(
     LibraryName = ExampleLibaryName,
