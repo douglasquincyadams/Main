@@ -5,14 +5,15 @@ import numpy
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import RectBivariateSpline
-
+import DS_SkyExposure as SE
 from scipy.interpolate import UnivariateSpline
 from scipy.optimize import brentq
+import JCluster as jc
 from scipy.integrate import quad
+import JclusterChris as jcluster
 
-import Trash_JCluster
-import Library_DataGetFermiInstrumentResponseSkyExposurePass7
 import Const_LocalDirectoriesFermiFiles
+
 
 def SplineFits_PSF(filenamePSF=None):
     hdulist=pyfits.open(filenamePSF)
@@ -81,11 +82,7 @@ def AvePSFelments(DMMass=None,
                   ):
 
     #livetimedata 
-    CosAveLTcube,CosineLiveTimeData=\
-        Library_DataGetFermiInstrumentResponseSkyExposurePass7.CosLTdataAndCTheta(
-            filenameLTC,
-            FileNumber=2
-            )
+    CosAveLTcube,CosineLiveTimeData=SE.CosLTdataAndCTheta(filenameLTC,FileNumber=2)
     
     #generate an averaged livetime Cube.
     numofhealpix= CosineLiveTimeData.shape[0]
@@ -123,7 +120,7 @@ def AvePSFelments(DMMass=None,
             'DMMass':DMMass,
             }
 
-    print DicAve    
+    #print DicAve    
     return DicAve
     
 def SplineFractionofsignalgivenR(
@@ -134,7 +131,7 @@ def SplineFractionofsignalgivenR(
     frac=np.linspace(0.001,.99999,200)
     Dist=np.ones(200)
     for i, fraci in enumerate(frac):
-        Dist[i]=Trash_JCluster.JClusterRadius(r200=r200,sigma=sigma,cl=fraci)
+        Dist[i]=jc.JClusterRadius(r200=r200,sigma=sigma,cl=fraci)
         #print Dist[i], fraci
     
     #print Dist, frac
@@ -143,13 +140,13 @@ def SplineFractionofsignalgivenR(
     #Dist1=np.concatenate((Dist,distAddOn))
     #frac1=np.concatenate((frac,FracAddOn))
     func1=UnivariateSpline(Dist,frac,s=0,ext=3)
-    #print Dist1
+    #print 'Dist',Dist
     #plt.plot(Dist,frac)
     #plt.plot(Dist,func1(Dist))
     #plt.show()
-    amountofsignal=.95
-    print 'amountofsignal', amountofsignal
-    print 'Jcluster Angle', Trash_JCluster.JClusterRadius(r200=r200,sigma=sigma,cl=amountofsignal)
+    #amountofsignal=.95
+    #print 'amountofsignal', amountofsignal
+    #print 'Jcluster Angle', jc.JClusterRadius(r200=r200,sigma=sigma,cl=amountofsignal)
     return func1,Dist[-1]
 
 def combinedRadius(r200=None,
@@ -158,9 +155,15 @@ def combinedRadius(r200=None,
                    fcore=None,
                    PhotonFrac=None,
                    ):
+    #print 'sigmaCore',sigmaCore
+    #print 'sigmaTail',sigmaTail
     SpCore,SpCoreRMax=SplineFractionofsignalgivenR(r200=r200,sigma=sigmaCore)
     SpTail,SpTailRMax=SplineFractionofsignalgivenR(r200=r200,sigma=sigmaTail)
     f1=lambda dist:fcore*SpCore(dist)+(1-fcore)*SpTail(dist)-PhotonFrac
+    #distEl=np.linspace(0,100,1)
+    #print 'distEl,f1(distEl)',distEl,f1(distEl)
+    #plt.plot(distEl,f1(distEl))
+    #plt.show()
     if PhotonFrac>.99999: print 'exceed limit'
     return brentq(f1,0.,np.max((SpCoreRMax,SpTailRMax)))                      
 
@@ -178,8 +181,9 @@ def SpE(En=None,
     return np.degrees(np.sqrt((c0*(En/100)**-beta)**2+c1**2)) #Energy in units of MeV
 
 def SGauss(PSFel=None,
-           Position='Core',
-           ScalingParam='Front',
+           Position=None,
+           ScalingParam=None,
+           cl=None,
            ):
     DMMass=PSFel['DMMass']
     #print 'DMMass',DMMass
@@ -195,8 +199,38 @@ def SGauss(PSFel=None,
     #return np.sqrt(gamma/(gamma-0.5))*SpE1*sig*1.65
     #return .68**(1/(1-gamma))*np.sqrt(2*gamma)*SpE1*sig
     #return np.sqrt(gamma)*SpE1*sig
-    return SpE1*sig/np.sqrt(1-1/gamma)*np.sqrt(2.)
+    if cl==.95:
+        if ScalingParam=='Back':
+             return SpE1*sig/np.sqrt(np.abs(1-1.57/gamma))*2**.5*.8
+        return SpE1*sig/np.sqrt(np.abs(1-1.57/gamma))*2**.5*.9
+    else:
+        if ScalingParam=='Back':
+            return SpE1*sig/np.sqrt(np.abs(1-1.66/gamma))*2**.5*.75
+        return SpE1*sig/np.sqrt(np.abs(1-1.5/gamma))*2**.5*.7
 
+def ChrisGauss(PSFel=None,
+                Position=None,
+                ScalingParam=None,
+                cl=None,
+                ):
+    DMMass=PSFel['DMMass']
+    #print 'DMMass',DMMass
+    SpE1=SpE(En=DMMass,ScalingParam=ScalingParam)
+    if Position=='Core':
+        gamma=PSFel['GCORE_AVE']
+        sig=PSFel['SCOREL_AVE']
+    else:
+        gamma=PSFel['GTAIL_AVE']
+        sig=PSFel['STAIL_AVE']
+    #print 'gamma',gamma
+    #print 'sig',sig
+    #return np.sqrt(gamma/(gamma-0.5))*SpE1*sig*1.65
+    #return .68**(1/(1-gamma))*np.sqrt(2*gamma)*SpE1*sig
+    #return np.sqrt(gamma)*SpE1*sig
+   
+    return SpE1*sig*np.sqrt(gamma/np.abs(gamma-1.5))
+        
+    
 def King(x=None,
          sigma=None,
          gamma=None,
@@ -204,55 +238,185 @@ def King(x=None,
          ):
     return (sigma**2*Sp**2)**-1*(1-1/gamma)*(1+x**2/(2*gamma*sigma**2*Sp**2))**-gamma/2.
 
+def intKing(x=None,
+            sigma=None,
+            gamma=None,
+            Sp=None,
+            ):
+    gammaPower=-gamma+1
+    return 1-(1.+(2*sigma**2*gamma*Sp**2)**-1*x**2)**gammaPower
+            
 
-def InVertCLandRadius(function=None,
-                      Parms=None,
-                      ):
-    return
 
 def CombinedPSF(PSFel=None,
                 ScalingParam=None,
                 PhotonFrac=None,
+                r200=None,
                 ):
     """Returns the Radius of the Combined PSF"""
-    CoreGauss=SGauss(PSFel=PSFel,Position='Core',ScalingParam=ScalingParam)
-    TailGauss= SGauss(PSFel=PSFel,Position='Tail',ScalingParam=ScalingParam)
+    CoreGauss=SGauss(PSFel=PSFel,Position='Core',ScalingParam=ScalingParam,cl=PhotonFrac)
+    TailGauss= SGauss(PSFel=PSFel,Position='Tail',ScalingParam=ScalingParam,cl=PhotonFrac)
     Ntail=PSFel['NTAIL_AVE']
     Stail=PSFel['STAIL_AVE']
     Score=PSFel['SCOREL_AVE']
     fcore=1/(1+Ntail*Stail**2/Score**2)
     #fcore=1.
-    print 'fcore',fcore
-    print 'PhotonFrac',PhotonFrac
-    RadiusOut=combinedRadius(r200=0.0,sigmaTail=TailGauss,sigmaCore=CoreGauss,fcore=fcore,PhotonFrac=PhotonFrac)
-    print RadiusOut
-    print PSFel
+    #print 'fcore',fcore
+    #print 'PhotonFrac',PhotonFrac
+    RadiusOut=combinedRadius(r200=r200,sigmaTail=TailGauss,sigmaCore=CoreGauss,fcore=fcore,PhotonFrac=PhotonFrac)
+    #print RadiusOut
+    #print PSFel
     return RadiusOut
 
-             
+def ChrisDoubleGaussPSF(PSFel=None,
+                        ScalingParam=None,
+                        nsigma=None,
+                        r200=None,
+                        cl=None,
+                        ):
+    """Returns the Radius of the Combined PSF For Chris's function"""
+    CoreGauss=ChrisGauss(PSFel=PSFel,Position='Core',ScalingParam=ScalingParam,cl=cl)
+    TailGauss= ChrisGauss(PSFel=PSFel,Position='Tail',ScalingParam=ScalingParam,cl=cl)
+    Ntail=PSFel['NTAIL_AVE']
+    Stail=PSFel['STAIL_AVE']
+    Score=PSFel['SCOREL_AVE']
+    fcore=1/(1+Ntail*Stail**2/Score**2)
+    return jcluster.JClusterRadius(r200=r200,sigma=[CoreGauss,TailGauss],w=[fcore,1-fcore],cl=cl)
+                        
+
+def CombinedKingRadius(PSFel=None,
+                       cl=None,
+                       DMmass=None,
+                       ScalingParam=None,
+                       ):
+    Ntail=PSFel['NTAIL_AVE']
+    Stail=PSFel['STAIL_AVE']
+    Score=PSFel['SCOREL_AVE']
+    Gcore=PSFel['GCORE_AVE']
+    Gtail=PSFel['GTAIL_AVE']
+    fcore=1/(1+Ntail*Stail**2/Score**2)
+    SpEEvaluated=SpE(En=DMmass,ScalingParam=ScalingParam)
+
+    IntKingCore=lambda x: intKing(x=x,sigma=Score,gamma=Gcore,Sp=SpEEvaluated)
+    IntKingTail=lambda x: intKing(x=x,sigma=Stail,gamma=Gtail,Sp=SpEEvaluated)
+    CoreMax=1000.*2*Score**2*Gcore
+    TailMax=1000.*2*Stail**2*Gtail
+   
+    combIntKing=lambda x: fcore*IntKingCore(x)+(1-fcore)*IntKingTail(x)-cl
+
+    return brentq(combIntKing,0.,np.max((CoreMax,TailMax)))             
                 
-             
+def TestFitForDifferentMasses(SpDicfront=None,SpDicback=None,filenameLTC=None,):
+    """
+    shows the relative error for the different cases as a function of Mass
+    """
+    r200=.0
+    
+    DMmassRange=np.power(10,np.linspace(3,6,30))
+    CombinedElementsDoug=np.ones(len(DMmassRange))
+    KingElements=np.ones(len(DMmassRange))
+    ChrisPSFelements=np.ones(len(DMmassRange))
+ 
+    cl=.68
+    ScalingParam='Back'
+ 
+    for i,DMmass in enumerate(DMmassRange):
+        print 'DMmass  ',DMmass
+        PSFel=AvePSFelments(DMMass=DMmass,SpDic=SpDicback, filenameLTC=filenameLTC,)
+        CombinedElementsDoug[i]=CombinedPSF(r200=r200,PSFel=PSFel,ScalingParam=ScalingParam,PhotonFrac=cl, )
+        KingElements[i]=CombinedKingRadius(PSFel=PSFel,cl=cl,DMmass=DMmass,ScalingParam=ScalingParam)
+        ChrisPSFelements[i]=ChrisDoubleGaussPSF(PSFel=PSFel,ScalingParam=ScalingParam,r200=r200,cl=cl)
+        
+    plt.figure(0)
+    plt.loglog(DMmassRange,CombinedElementsDoug,c='blue',label='Dougs-Front')
+    plt.loglog(DMmassRange,KingElements,c='red',label='KingsFunction-Front')
+    plt.loglog(DMmassRange,ChrisPSFelements,c='black',label='Chris-Front')
+
+    variation=np.abs(CombinedElementsDoug-KingElements)*2/(CombinedElementsDoug+KingElements)
+    plt.loglog(DMmassRange,variation,c='green',ls='--',label='pecent Front')
+    #plt.legend(loc=3)
+    #plt.show()
+           
+    ScalingParam='Front'
+    for i,DMmass in enumerate(DMmassRange):
+        print 'DMmass  ',DMmass
+        PSFel=AvePSFelments(DMMass=DMmass,SpDic=SpDicfront, filenameLTC=filenameLTC,)
+        CombinedElementsDoug[i]=CombinedPSF(r200=r200,PSFel=PSFel,ScalingParam=ScalingParam,PhotonFrac=cl, )
+        KingElements[i]=CombinedKingRadius(PSFel=PSFel,cl=cl,DMmass=DMmass,ScalingParam=ScalingParam)
+        ChrisPSFelements[i]=ChrisDoubleGaussPSF(PSFel=PSFel,ScalingParam=ScalingParam,r200=r200,cl=cl)
+        
+    plt.loglog(DMmassRange,CombinedElementsDoug,c='blue',label='Dougs-Back')
+    plt.loglog(DMmassRange,KingElements,c='red',label='KingsFunction-Back')
+    plt.loglog(DMmassRange,ChrisPSFelements,c='black',label='Chris-Back')
+    
+    variation=np.abs(CombinedElementsDoug-KingElements)*2/(CombinedElementsDoug+KingElements)
+    plt.loglog(DMmassRange,variation,c='green',ls=':',label='pecent Back')
+
+    plt.title('68 percentile Confidence')
+    plt.legend(loc=3)
+    plt.xlabel('DM mass (MeV)')
+    plt.ylabel('Degrees or percent')
+   
+
+    plt.figure(1)
+    cl=0.95
+    ScalingParam='Front'
+    for i,DMmass in enumerate(DMmassRange):
+        print 'DMmass  ',DMmass
+        PSFel=AvePSFelments(DMMass=DMmass,SpDic=SpDicfront, filenameLTC=filenameLTC,)
+        CombinedElementsDoug[i]=CombinedPSF(r200=r200,PSFel=PSFel,ScalingParam=ScalingParam,PhotonFrac=cl, )
+        KingElements[i]=CombinedKingRadius(PSFel=PSFel,cl=cl,DMmass=DMmass,ScalingParam=ScalingParam)
+        ChrisPSFelements[i]=ChrisDoubleGaussPSF(PSFel=PSFel,ScalingParam=ScalingParam,r200=r200,cl=cl)
+
+    plt.loglog(DMmassRange,ChrisPSFelements,c='black',label='Chris-Front')
+    plt.loglog(DMmassRange,CombinedElementsDoug,c='blue',label='Dougs-Front')
+    plt.loglog(DMmassRange,KingElements,c='red',label='KingsFunction-Front')
+
+    variation=np.abs(CombinedElementsDoug-KingElements)*2/(CombinedElementsDoug+KingElements)
+    plt.loglog(DMmassRange,variation,c='green',ls='--',label='pecent Front')
+    
+    ScalingParam='Back'
+    for i,DMmass in enumerate(DMmassRange):
+        print 'DMmass  ',DMmass
+        PSFel=AvePSFelments(DMMass=DMmass,SpDic=SpDicback, filenameLTC=filenameLTC,)
+        CombinedElementsDoug[i]=CombinedPSF(r200=r200,PSFel=PSFel,ScalingParam=ScalingParam,PhotonFrac=cl, )
+        KingElements[i]=CombinedKingRadius(PSFel=PSFel,cl=cl,DMmass=DMmass,ScalingParam=ScalingParam)
+        ChrisPSFelements[i]=ChrisDoubleGaussPSF(PSFel=PSFel,ScalingParam=ScalingParam,r200=r200,cl=cl)
+
+    plt.loglog(DMmassRange,CombinedElementsDoug,c='blue',label='Dougs-Back')
+    plt.loglog(DMmassRange,KingElements,c='red',label='KingsFunction-Back')
+    plt.loglog(DMmassRange,ChrisPSFelements,c='black',label='Chris-Back')
+
+    variation=np.abs(CombinedElementsDoug-KingElements)*2/(CombinedElementsDoug+KingElements)
+    plt.loglog(DMmassRange,variation,c='green',ls=':',label='pecent Back')
+
+    plt.title('95 percentile Confidence')
+    plt.legend(loc=3)
+    plt.xlabel('DM mass (MeV)')
+    plt.ylabel('Degrees or percent')
+
+
+
+
+    plt.show()
+    return           
+
 def main():
-    PSFdir = Const_LocalDirectoriesFermiFiles.DataFilesInstrumentResponse4UltraPointSpreadFunctionDirectory
-    LTCdir = Const_LocalDirectoriesFermiFiles.DataFilesLiveTimeCubeDirectory
 
-    filenamePSF=PSFdir+ '/psf_P7REP_ULTRACLEAN_V15_back.fits'
+    filenamePSFfront=Const_LocalDirectoriesFermiFiles.DataFilesInstrumentResponse4UltraPointSpreadFunctionDirectory + '/psf_P7REP_ULTRACLEAN_V15_front.fits'
+    filenamePSFback=Const_LocalDirectoriesFermiFiles.DataFilesInstrumentResponse4UltraPointSpreadFunctionDirectory + '/psf_P7REP_ULTRACLEAN_V15_back.fits'
     
-    filenameLTC=LTCdir + '/exposurecube_filtered_events_10GeV_1TeV_zmax100_GTI_ultraclean.fits'
+    filenameLTC=Const_LocalDirectoriesFermiFiles.DataFilesLiveTimeCubeDirectory+'/exposurecube_filtered_events_10GeV_1TeV_zmax100_GTI_ultraclean.fits'
 
-    SpDic=SplineFits_PSF(filenamePSF=filenamePSF)
+    SpDicfront=SplineFits_PSF(filenamePSF=filenamePSFfront)
+    SpDicback=SplineFits_PSF(filenamePSF=filenamePSFback)
 
-    #plot_SPF_Test(Filename=filenamePSF, Dictionary=SpDic, SpName='Spl_NCORE',)
 
-    PSFel=AvePSFelments(DMMass=1.e4,SpDic=SpDic, filenameLTC=filenameLTC,)
-    #print 'SpE'
-    #print SpE(En=1e5,ScalingParam='Front'), SpE(En=1e5,ScalingParam='Back')
-    #print 'guass'
-    #print SGauss(PSFel=PSFel,Position='Core',ScalingParam='Front'), SGauss(PSFel=PSFel,Position='Tail',ScalingParam='Front')
+    TestFitForDifferentMasses(SpDicfront=SpDicfront,SpDicback=SpDicback,filenameLTC=filenameLTC,)
 
-    CombinedPSF(PSFel=PSFel,ScalingParam='Back',PhotonFrac=.95, )
     
-    
+
+
 
 if __name__ == '__main__':
     main()

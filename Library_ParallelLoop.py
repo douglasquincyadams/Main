@@ -74,7 +74,7 @@ RETURNS:
 
 """
 import pp
-import mpi4py
+#import mpi4py
 import copy
 import Const_Parallel
 import pprint

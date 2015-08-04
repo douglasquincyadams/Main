@@ -241,22 +241,22 @@ def Main(
 
 
     #CONCAT
-    print "Concatenate FloatParts..."
+    #print "Concatenate FloatParts..."
     AllClusterFloatPart = numpy.concatenate(    \
         tuple(ListOfFloatParts) ,               \
         axis=0                                  \
     )
-    print "AllClusterFloatPart.shape", AllClusterFloatPart.shape
+    #print "AllClusterFloatPart.shape", AllClusterFloatPart.shape
 
-    print "Concatenate Names..."
+    #print "Concatenate Names..."
     AllClusterNames = numpy.concatenate(        \
         tuple(ListOfNameParts) ,                \
         axis=0                                  \
     )
-    print "AllClusterNames.shape", AllClusterNames.shape
+    #print "AllClusterNames.shape", AllClusterNames.shape
 
     #FILTER
-    print "Filtering Rows Which Contain 0.0 Values (Clearly Errors): "
+    #print "Filtering Rows Which Contain 0.0 Values (Clearly Errors): "
     RowIndex = 0
     RemovedIndexes = []
     for Row in AllClusterFloatPart:
@@ -264,10 +264,10 @@ def Main(
             RemovedIndexes.append(RowIndex)
         RowIndex += 1
     AllClusterFloatPartFiltered = numpy.delete(AllClusterFloatPart, RemovedIndexes, 0)
-    print "AllClusterFloatPartFiltered.shape", AllClusterFloatPartFiltered.shape
+    #print "AllClusterFloatPartFiltered.shape", AllClusterFloatPartFiltered.shape
 
     AllClusterNamesFiltered = numpy.delete(AllClusterNames, RemovedIndexes, 0)
-    print "AllClusterNamesFiltered.shape", AllClusterNamesFiltered.shape
+    #print "AllClusterNamesFiltered.shape", AllClusterNamesFiltered.shape
 
 
     #EXTEND (Calculates Jfactor)

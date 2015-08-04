@@ -379,6 +379,7 @@ def Main(
     matplotlib.pylab.xlabel('PossibleWimpMasses (GeV) ')
     matplotlib.pylab.ylabel('PossibleAnnihilationCrossSections (cm^3/s) ')
     matplotlib.pylab.savefig(  DirectoryGeneratedGraphsCurrentRun  + '/MassCrossSectionsConfidence.png')
+    print DirectoryGeneratedGraphsCurrentRun
     print 'PossibleWimpMasses', PossibleWimpMasses
 
 

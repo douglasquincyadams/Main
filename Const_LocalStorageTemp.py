@@ -1,6 +1,8 @@
 
 
+import Utility_masterConfig as config
 
-Directory = '../TempDataStore/'
+
+Directory = config.Directory
 
 

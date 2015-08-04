@@ -1,5 +1,12 @@
+
+
+import Utility_masterConfig as config
+
+
+
+
 #MainDirectory = '/media/doug/DATADISK/Doug/FermiData'
-MainDirectory = '/home/douglas/Desktop/LocalDataCopies/FermiData'
+MainDirectory = '../FermiData'
 
 DataFilesWeeklyDirectory = MainDirectory + '/extended'
 
@@ -25,7 +32,7 @@ DataFilesInstrumentResponse4UltraPointSpreadFunctionDirectory = \
 
 
 #GRAPHS:
-GeneratedGraphsDirectory = '../GeneratedGraphs'
+GeneratedGraphsDirectory = config.GeneratedGraphs
 
 FermiEventsSkyMap                   = GeneratedGraphsDirectory + '/FermiEventsSkyMap'
 

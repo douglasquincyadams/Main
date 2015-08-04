@@ -158,9 +158,11 @@ if (
 
     #Point Source Locations 3d projected coordinates on unit sphere (these have centers on the unit sphere):
     PointSourceDistances = numpy.ones(PointSourcesCount)
+    SurfaceProjectedPointSourceRadii = numpy.ones(PointSourcesCount) *numpy.tan(1*np.pi/180.)
+
     SurfaceProjectedPointSourceCenterLocations3DTupleTranspose = \
         Library_GeometrySphericalToCartesianCoordinates.Main(
-            Radius          = 1.0,
+            Radius          = numpy.sqrt(1.0+SurfaceProjectedPointSourceRadii**2),
             Inclination     = PointSourceLatitudes * pi/180  + pi/2,  #needs to be in radians and transformed from latitude to inclination
             Azimuth         = PointSourceLongitudes * pi/180,         #needs to be in radians
         )
@@ -168,7 +170,6 @@ if (
     Library_PrintDatasetStatistics.Main( SurfaceProjectedPointSourceLocations3D , 'SurfaceProjectedPointSourceLocations3D', 1)
 
 
-    SurfaceProjectedPointSourceRadii = numpy.ones(PointSourcesCount) * numpy.sqrt( 1 + 1 - 2*numpy.cos(1*pi/180.) ) #Law of cosines
     Library_PrintDatasetStatistics.Main(SurfaceProjectedPointSourceRadii, "SurfaceProjectedPointSourceRadii", 1)
 
     #INTERSECT EVENTS && POINTSOURCES:

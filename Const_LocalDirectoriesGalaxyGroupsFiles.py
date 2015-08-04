@@ -1,12 +1,16 @@
 
+import Utility_masterConfig as config
 
-MainDirectory = '../LocalDataCopies/GalaxyGroupData'
+
+MainDirectory = '../GalaxyGroupData'
 
 SourceDataFiles = MainDirectory + '/SourceDataFiles'
 
 
 #GRAPHS:
-GeneratedGraphs = '../GeneratedGraphs/GalaxyGroupsSkyMap'
+
+
+GeneratedGraphs = config.GeneratedGraphsGalaxyGroup
 
 
 #open(GeneratedGraphs)

@@ -64,6 +64,7 @@ def Main(
     ReturnValuesRequired = [
         "ProjectedSphereRadius", 
         "ProjectedSphereCenterDistance",
+        "ExternalSphereCentralRadialAngle",
         ],
     CheckArguments = True,
     PrintExtra = False,
@@ -115,11 +116,11 @@ def Main(
 
     #Angles:
     if ("ExternalSphereCentralRadialAngle" in ReturnValuesRequired):
-        ExternalSphereCentralRadialAngle = numpy.arctan(ExternalSphereRadius/ ExternalSphereCenterDistance)
+        ExternalSphereCentralRadialAngle = numpy.arcsin(ExternalSphereRadius/ ExternalSphereCenterDistance)
         ReturnValues["ExternalSphereCentralRadialAngle"] = ExternalSphereCentralRadialAngle
 
     #TangentLines    
-    ExternalSphereTangentLineDistance = numpy.sqrt(ExternalSphereRadius**2. + ExternalSphereCenterDistance**2.)
+    ExternalSphereTangentLineDistance = numpy.sqrt( ExternalSphereCenterDistance**2.-ExternalSphereRadius**2.)
     if ("ExternalSphereTangentLineDistance" in ReturnValuesRequired):
         ReturnValues["ExternalSphereTangentLineDistance"] = ExternalSphereTangentLineDistance
 
