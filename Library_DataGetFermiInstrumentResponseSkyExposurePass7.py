@@ -5,6 +5,7 @@ SOURCE:
 DESCRIPTION:
     calculates exposure on the sky over a healpix
 
+    TODO: Needs to be pulled appart into 2 files.
 
 ARGS:
 
