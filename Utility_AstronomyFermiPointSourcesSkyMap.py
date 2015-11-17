@@ -63,12 +63,25 @@ Library_GraphSkyMap.Main(
     Latitudes   = Latitudes   ,
     Longitudes  = Longitudes  ,
     Zvalues     = Radii,
+        Zlabel                      = "Radii (Degrees) ( 95% Confidence Containment)"    ,
 #    ShapeFunctions =
-#    Projection =
+        Projection                  = "Mollweide" ,
+
     DirectoryGeneratedGraphs = PointSourcesGeneratedGraphsDirectory ,
     )
 
 
+
+Library_GraphSkyMap.Main(
+    Latitudes   = Latitudes   ,
+    Longitudes  = Longitudes  ,
+    Zvalues     = Radii,
+        Zlabel                      = "Radii (Degrees) ( 95% Confidence Containment)"    ,
+#    ShapeFunctions =
+        Projection                  = "Rectangle" ,
+
+    DirectoryGeneratedGraphs = PointSourcesGeneratedGraphsDirectory ,
+    )
 
 
 """

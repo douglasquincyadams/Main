@@ -24,6 +24,7 @@ def Main(
     LibraryName  = None,
     IncludeTestFiles = False,
     FlatDependencyTree = [], #Expected to be appendend and passed by reference
+    IncludeThirdPartyPackages = False,
     ):
     #print "=======FN ST============="
 
@@ -54,7 +55,7 @@ def Main(
             #print '   Dependency', Dependency
             DependencyFileType = Dependency.split('_')[0]
 
-            if (DependencyFileType in ['Type', 'Library', 'Trash', 'Const', 'Test', 'DS', 'Example' ] ): #Filetypes which are allowed for inclusion
+            if (DependencyFileType in ['Type', 'Library', 'Trash', 'Const', 'Test', 'DS', 'Example', 'Config' ] or IncludeThirdPartyPackages ): #Filetypes which are allowed for inclusion
                 if (not Dependency in FlatDependencyTree):
 
                     FlatDependencyTree = sorted( list( set(   

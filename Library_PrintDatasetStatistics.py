@@ -18,6 +18,8 @@ def Main(
     Dataset = None,             
     PrintLineHeader = "",       
     PrintLineBufferSize = 0,    
+    PrintLinePrefix = "",
+    WantedStatistics = [],
     CheckArguments = True,
     PrintExtra = False
     ):
@@ -28,6 +30,11 @@ def Main(
     DatasetShape = Dataset.shape
     DatasetShapeLength = len(DatasetShape)
     SpaceBuffer = " "*PrintLineBufferSize
+    if (PrintLinePrefix == ""):
+        Prefix = SpaceBuffer
+    else:
+        Prefix = PrintLinePrefix + SpaceBuffer
+
     DatasetSize = DatasetShape[0]
 
     #CheckArguments:
@@ -40,6 +47,8 @@ def Main(
                 print "ArgumentErrorMessage:\n", ArgumentErrorMessage
             raise Exception(ArgumentErrorMessage)
 
+
+    DatasetMemory = Dataset.nbytes
 
 
     try:
@@ -68,18 +77,34 @@ def Main(
             PointSum           = None
 
     if (len(PrintLineHeader) > 0):
-        print PrintLineHeader
+        print Prefix + PrintLineHeader
 
-    print SpaceBuffer + "DatasetDataType    : ", DatasetDataType
-    print SpaceBuffer + "DatasetShape       : ", DatasetShape
-    print SpaceBuffer + "DatasetSize        : ", DatasetSize
-    print SpaceBuffer + "NumberDimensions   : ", NumberDimensions
-    print SpaceBuffer + "MinimumDomainPoint : ", MinimumDomainPoint
-    print SpaceBuffer + "MaximumDomainPoint : ", MaximumDomainPoint
-    print SpaceBuffer + "AverageDomainPoint : ", AverageDomainPoint
-    print SpaceBuffer + "StandardDeviation  : ", StandardDeviation
-    print SpaceBuffer + "PointSum           : ", PointSum
+    if (WantedStatistics == []):
+        WantedStatistics = [
+            "DatasetDataType",
+            "DatasetShape",
+            "DatasetSize",
+            "NumberDimensions",
+            "MinimumDomainPoint",
+            "MaximumDomainPoint",
+            "AverageDomainPoint",
+            "StandardDeviation",
+            "PointSum",
+            "DatasetMemory",
+            ]
 
+    if ("DatasetDataType" in WantedStatistics):
+        print Prefix + SpaceBuffer + "DatasetDataType    : ", DatasetDataType
+
+    print Prefix + SpaceBuffer + "DatasetShape       : ", DatasetShape
+    print Prefix + SpaceBuffer + "DatasetSize        : ", DatasetSize
+    print Prefix + SpaceBuffer + "NumberDimensions   : ", NumberDimensions
+    print Prefix + SpaceBuffer + "MinimumDomainPoint : ", MinimumDomainPoint
+    print Prefix + SpaceBuffer + "MaximumDomainPoint : ", MaximumDomainPoint
+    print Prefix + SpaceBuffer + "AverageDomainPoint : ", AverageDomainPoint
+    print Prefix + SpaceBuffer + "StandardDeviation  : ", StandardDeviation
+    print Prefix + SpaceBuffer + "PointSum           : ", PointSum
+    print Prefix + SpaceBuffer + "DatasetMemory      : ", DatasetMemory
 
 
 

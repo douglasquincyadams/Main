@@ -13,6 +13,7 @@ DESCRIPTION:
     Does it quack?
     Does it look like a duck?
 
+    Then it is a duck
         
 ARGS:
     IterableCandidate

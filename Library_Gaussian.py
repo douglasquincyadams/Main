@@ -1,66 +1,86 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 12 21:05:14 2015
 
-The multivariate gaussian:
+SOURCE:
 
-    Outputs a gaussian density value given a mean and a covariance
+    On Singular Cov:
+        Why is a sample covariance matrix singular when sample size is less than number of variables?
+        http://stats.stackexchange.com/questions/60622/why-is-a-sample-covariance-matrix-singular-when-sample-size-is-less-than-number
 
-    N-Dimensional in nature - thus the args need to be input with logical dimmensions
-        * Point.shape == (N,)
-        * MeanPoint.shape == (N,)
-        * CovarianceMatrix.shape == (N, N)
+DESCRIPTION:
+    The multivariate gaussian:
 
-The covariance calculation:
+        Outputs a gaussian density value given a mean and a covariance
 
-    Covariance calculation in Numpy is based on a different standard of dataset manipulation
-       The covariance matrix expects data to look like:
-           Alpha = [[Xcoord1, Xcoord2,...Xcoord3], [Ycoord1, Ycoord2, Ycoord3]... ]
+        N-Dimensional in nature - thus the args need to be input with logical dimmensions
+            * Point.shape == (N,)
+            * MeanPohttp://stats.stackexchange.com/questions/60622/why-is-a-sample-covariance-matrix-singular-when-sample-size-is-less-than-numberint.shape == (N,)
+            * CovarianceMatrix.shape == (N, N)
 
-       By convention in our code, we have data of the form:
-           Beta = [point1 = [Xcoord1, Xcoord2,...], point2, pointN]
-    
-       Note: 
-            Alpha == Beta.Transpose
-    
-       Because of this data convention difference:
-           We will have to massage the data carefully for each function call
+    The covariance calculation:
 
+        Covariance calculation in Numpy is based on a different standard of dataset manipulation
+           The covariance matrix expects data to look like:
+               Alpha = [[Xcoord1, Xcoord2,...Xcoord3], [Ycoord1, Ycoord2, Ycoord3]... ]
 
-Scipy:
-
-    Scipy Gaussian Source code is here:
-        https://github.com/scipy/scipy/blob/master/scipy/stats/_multivariate.py
-
-    Scipy Gaussian Source Code was written by the following engineers:
-        Evgeni Burovski     - Physics at Lancaster University Lecturer
-        Florian Wilhelm     - KIT Math (Math degree from an engineering technical school)
-        Ralf Gommers        - MIT Engineering 
-        ChadFulton          - No Info
-        Johannes Kulick     - Ph.D Student at Machine Learning and Robotics Lab of Uni Stuttgart
-        Joris Vankerschaver - Joris has a Ph.D. in applied mathematics from Ghent University in Belgium
+           By convention in our code, we have data of the form:
+               Beta = [point1 = [Xcoord1, Xcoord2,...], point2, pointN]
+        
+           Note: 
+                Alpha == Beta.Transpose
+        
+           Because of this data convention difference:
+               We will have to massage the data carefully for each function call
 
 
+    Scipy:
 
-@author: Adams, Douglas
+        Scipy Gaussian Source code is here:
+            https://github.com/scipy/scipy/blob/master/scipy/stats/_multivariate.py
+
+        Scipy Gaussian Source Code was written by the following engineers:
+            Evgeni Burovski     - Physics at Lancaster University Lecturer
+            Florian Wilhelm     - KIT Math (Math degree from an engineering technical school)
+            Ralf Gommers        - MIT Engineering 
+            ChadFulton          - No Info
+            Johannes Kulick     - Ph.D Student at Machine Learning and Robotics Lab of Uni Stuttgart
+            Joris Vankerschaver - Joris has a Ph.D. in applied mathematics from Ghent University in Belgium
+
+
+ARGS:
+
+
+RETURNS:
+
+
 """
 import numpy
 import scipy
 import scipy.stats
+
 #------------------------------------------------------------------------------
 def Main( 
     Point = None, 
     MeanPoint = None, 
     CovarianceMatrix = None, 
+    AllowSingular = True,
     PrintExtra = False, 
     CheckArguments = True,
     Log = False,
     ):
 
     if (Log):
-        return scipy.stats.multivariate_normal.logpdf(Point, MeanPoint,  CovarianceMatrix, False)
+        return scipy.stats.multivariate_normal.logpdf(
+            Point, 
+            MeanPoint,  
+            CovarianceMatrix, 
+            allow_singular = AllowSingular)
     else:
-        return scipy.stats.multivariate_normal.pdf(Point, MeanPoint,  CovarianceMatrix, False)
+        return scipy.stats.multivariate_normal.pdf(
+            Point, 
+            MeanPoint,  
+            CovarianceMatrix, 
+            allow_singular = AllowSingular)
 
     return None
 

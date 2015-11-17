@@ -119,7 +119,7 @@ BatchSize = 500
 k = 0
 while ( k < PointSourcesCount):
     if (k % BatchSize == 0):
-        print '   ' , datetime.datetime.now(), "PointSources " , k, " to ", min(k + BatchSize, PointSourcesCount)
+        print '   ' , datetime.datetime.utcnow(), "PointSources " , k, " to ", min(k + BatchSize, PointSourcesCount)
 
     PointSourceLocation = SurfaceProjectedPointSourceLocations3D[k] 
     PointSourceRadius   = SurfaceProjectedPointSourceRadii[k]
@@ -135,7 +135,7 @@ IndicesOfPhotonsFromPointSources = []
 k = 0
 while( k < PointSourcesCount):
     if (k %100 == 0):
-        print datetime.datetime.now(), k, " to ", min(k + 100, PointSourcesCount)
+        print datetime.datetime.utcnow(), k, " to ", min(k + 100, PointSourcesCount)
     PointSource = PointSourceLocations[k] #numpy.array([180.0, 0.0])
     PointSourceRadius = PointSourceRadii[k]
     IndicesOfPhotonsFromPointSource = PhotonKDTree.query_ball_point(PointSource, PointSourceRadius  )

@@ -23,11 +23,11 @@ REFERENCES:
 """
 import numpy
 
-def Main(\
-    Dataset = None, \
-    Point = None, \
-    PrintExtra = False, \
-    CheckArguments = True ,\
+def Main(
+    Dataset = None, 
+    Point = None, 
+    PrintExtra = False, 
+    CheckArguments = True ,
     ):
     if (PrintExtra):
         print "Dataset.shape", Dataset.shape

@@ -136,7 +136,7 @@ def Main(
 
     #Using the minimum and maximum points, we create a meshgrid of points
     #   This grid of points will be plugged into the function
-    X, Y = numpy.mgrid[xmin:xmax:100j, ymin:ymax:100j]
+    X, Y = numpy.mgrid[xmin:xmax:100j, ymin:ymax:100j] #1000 x 1000 -> 1 million points
     PointsToPlugIn = numpy.vstack([X.ravel(), Y.ravel()])
     PointsToPlugInDataset = PointsToPlugIn.T
     PlugInPointsCount = len(PointsToPlugInDataset)

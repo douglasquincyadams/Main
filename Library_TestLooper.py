@@ -15,7 +15,7 @@ DESCRIPTION:
         keeping track of the test success,
         checking results against expected results
         Passing in the args contained within the  `ArgSetExpectedResultCombos`
-    
+        
 
 ARGS:
     FunctionToTest
@@ -30,12 +30,33 @@ ARGS:
     OrderOfMagnitudeRatioMax
         Type: Python Float
         Description:
+            None provided -> ignored 
             Maximum distance between any expected result and the actual result of the function
 
     HardDifferenceMax:
         Type: Python Float
         Description:
+            None provided -> ignored 
             Maximum absolute distance between any expected result and the actual result of the function
+
+    DoEqualityCheck
+        Type: Python Bool   
+        Description:
+            Checks that non-numerical, non-iterable values are exactly equal within the result
+        Default: True
+
+    ResultOrderMatters:
+        Type: Python Bool
+        Description:
+            None provided -> ignored 
+            Each expected result must be some type of iterable object for this to make sense
+            If the expected result is nested, nested order is assumed to matter
+
+    MinFlatResultLength
+        Type: Python Int
+        Description:
+            None provided -> ignored 
+            Expected result, when iterable, and flattened if nested, is checked against this value
 
 RETURNS:
     TestSuccesses
@@ -55,18 +76,21 @@ import pprint
 import collections
 import traceback
 #------------------------------------------------------------------------------
-import Library_OrderOfMagnitudeRatioSmallCheck
-import Library_ComponentExtract
+import Library_TestResultCheck
 import Library_PrintFullTestSuccess
-import Library_HardDifferenceSmallCheck
-
 
 def Main(
     FunctionToTest = None,
     ArgSetExpectedResultCombos = None,
-    ResultOrderMatters = True, #must be an arrray for this to make sense
+
     OrderOfMagnitudeRatioMax = None,
-    HardDifferenceMax = .01,
+    HardDifferenceMax = None,
+    DoEqualityCheck = True,
+    DoContainmentCheck = False,
+    MinFlatResultLength = None,
+    MaxFlatResultLength = None,
+    ResultOrderMatters = True, 
+
     CheckArguments = True,
     PrintExtra = True,
     ):
@@ -86,8 +110,8 @@ def Main(
     for ArgSet, ExpectedResult in ArgSetExpectedResultCombos:
         print "Running Test ", k
 
+        SingleResultCorrectnessCheck = True
         try:
-
             if (PrintExtra):
                 print ' ArgSet:'
                 items = ArgSet.items()
@@ -95,57 +119,39 @@ def Main(
                 pprint.pprint( items, indent=4)
                 print ''
 
-            Result = FunctionToTest(
-                **ArgSet #*ArgSet #**kwargs python wizzardry -> unpacks the ArgSet as named args into the function call
-            )
-            
-            #TODO: More type case casting:
-            if (type(ExpectedResult) == type({})):
-                if (PrintExtra):
-                    print ' Type Dictionary encountered -> converting Results to sorted by key names arrays'
-                Result = [value for (key, value) in sorted(Result.items())]
-                ExpectedResult = [value for (key, value) in sorted(ExpectedResult.items())]
-                #Result = Result.values()
-                #ExpectedResult = ExpectedResult.values()
+            Result = None
+            try:
+                Result = FunctionToTest(
+                    **ArgSet #*ArgSet #**kwargs python wizzardry -> unpacks the ArgSet as named args into the function call
+                )
+            except Exception as E:
+                Result = Exception('')
+                print '\nFunction Failed to execute, printing exception below:\n'
+                print str(E)
+                traceback.print_exc()
+                print '\nCorrectness Checker now will see if the exception is expected...\n'
 
-            if ( ResultOrderMatters == False):
-                Result = numpy.sort(numpy.array(Result), axis = 0)
-                ExpectedResult = numpy.sort(numpy.array(ExpectedResult),  axis = 0)
+            #Run our checker on a single ArgSet, against a single Expected Result
+            SingleResultCorrectnessCheck = Library_TestResultCheck.Main(
+                Result = Result,
+                ExpectedResult = ExpectedResult,
 
-            if (PrintExtra):
-                print ' Result          '
-                pprint.pprint( Result )
-                print ''
-                print ' ExpectedResult  '
-                pprint.pprint( ExpectedResult )
-                print ''
+                OrderOfMagnitudeRatioMax = OrderOfMagnitudeRatioMax,
+                HardDifferenceMax = HardDifferenceMax,
+                DoEqualityCheck = DoEqualityCheck,
+                DoContainmentCheck = DoContainmentCheck,
+                MinFlatResultLength = MinFlatResultLength,
+                MaxFlatResultLength = MaxFlatResultLength,
+                ResultOrderMatters = ResultOrderMatters, 
 
-            OrderOfMagnitudeRatioSmallCheckResult = True
-            if ( OrderOfMagnitudeRatioMax != None ):
-                OrderOfMagnitudeRatioSmallCheckResult = \
-                    Library_OrderOfMagnitudeRatioSmallCheck.Main( 
-                        Result , 
-                        ExpectedResult, 
-                        OrderOfMagnitudeRatioMax)
+                CheckArguments = CheckArguments,
+                PrintExtra = PrintExtra,
+                )
 
-            HardDifferenceSmallCheckResult = True
-            if (HardDifferenceMax != None)    :
-                HardDifferenceSmallCheckResult = \
-                    Library_HardDifferenceSmallCheck.Main(        
-                        Result, 
-                        ExpectedResult, 
-                        HardDifferenceMax) 
 
-            if (PrintExtra):
-                print ' OrderOfMagnitudeRatioSmallCheckResult', OrderOfMagnitudeRatioSmallCheckResult
-                print ''
-                print ' HardDifferenceSmallCheckResult', HardDifferenceSmallCheckResult
-                print ''
-
-            if ( OrderOfMagnitudeRatioSmallCheckResult and HardDifferenceSmallCheckResult):
+            if ( SingleResultCorrectnessCheck ):
                 print ' Single Test Success'
-                TestSuccesses.append(True)
-                print ''
+
             else:
                 print ' ArgSet:'
                 pprint.pprint( ArgSet )
@@ -158,21 +164,23 @@ def Main(
                 print '                     Single Test Failure'
                 print '                 !!!                     !!!'
                 print ''
-                FullTestSuccess = False
-                TestSuccesses.append(False)
 
         except Exception as E:
-            print ' Exception In attempt'
+            print ' Exception In an execution attempt within the test looper loop.'
+            print ' Exception is printed below loop will continue afterwards.'
+            print ' '
             print str(E)
             traceback.print_exc()
-            FullTestSuccess = False
-
-        print ' '
+            SingleResultCorrectnessCheck = False
+            
+        TestSuccesses.append( SingleResultCorrectnessCheck )
+        FullTestSuccess = FullTestSuccess and SingleResultCorrectnessCheck
         k += 1
 
     if (PrintExtra):
-        Library_PrintFullTestSuccess.Main(FullTestSuccess)
-
+        print ' TestSuccesses'
+        print ' ', TestSuccesses
+    Library_PrintFullTestSuccess.Main(FullTestSuccess)
 
     return TestSuccesses
 

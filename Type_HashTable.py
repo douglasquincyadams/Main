@@ -7,13 +7,18 @@ SOURCE:
 
 DESCRIPTION:
 
-    This implements what is known as a 
+    This implements a combination of 
         `Duck typing`
+            Does it quack?
+            Does it look like a duck?
+        `KnownTypeListing`
+            Is it within a list of documented types?
+            
+    If its not a known hashy type, and it doesn't act like a hashy type:
+        Then it is not a hashy type
+    
 
-    Does it quack?
-    Does it look like a duck?
-
-        
+            
 ARGS:
     HashTableCandidate
         Description:
@@ -31,24 +36,30 @@ RETURNS:
 
 """
 
+import collections
+
 def Main(
     HashTableCandidate = None,
     PrintExtra = False,
     CheckArguments = True,
     ):
     
+    KnownHashTypes = [dict , collections.OrderedDict ]
+    Result = False
 
-    
-    try:
-        keys = HashTableCandidate.keys()
-        #print 'keys', keys
-        firstKey = keys[0]
-        #print 'firstKey', firstKey
-        firstValue = HashTableCandidate[firstKey]
-        #print 'firstValue', firstValue
+    if (type(HashTableCandidate) in KnownHashTypes ):
         Result = True
-    except:
-        Result = False
+    else:
+        try:
+            keys = HashTableCandidate.keys()
+            #print 'keys', keys
+            firstKey = keys[0]
+            #print 'firstKey', firstKey
+            firstValue = HashTableCandidate[firstKey]
+            #print 'firstValue', firstValue
+            Result = True
+        except:
+            Result = False
 
 
     return Result

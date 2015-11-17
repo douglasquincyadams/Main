@@ -17,6 +17,7 @@ def Main(
     B = None,
     Max = None,
     CheckArguments = True,
+    PrintExtra = False,
     ):
 
     #Cast each entry to a numpy array of floats

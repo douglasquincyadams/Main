@@ -75,7 +75,11 @@ for PreserveOrder in [True, False]:
                 ArgsExpectedResultList = ArgsExpectedResultListAxis1
 
         for Arg, ExpectedResult in ArgsExpectedResultList:
-            Result = Library_SortNumpyDataset.Main(Dataset = Arg, Axis = Axis, PreserveOrder = PreserveOrder)
+            Result = Library_SortNumpyDataset.Main(
+                Dataset = Arg, 
+                Axis = Axis, 
+                PreserveOrder = PreserveOrder
+                )
             #print Result
             #if ( numpy.array_equal(Result, ExpectedResult )  ):
             if (str(Result) == str(ExpectedResult)): #Lazy is sometimes better ...

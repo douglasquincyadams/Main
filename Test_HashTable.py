@@ -26,6 +26,15 @@ ArgSetExpectedResultCombos.append(
 ArgSetExpectedResultCombos.append(
     (
         {
+            "HashTableCandidate"  : {}           , 
+        }
+        , 
+        True
+    )
+)
+ArgSetExpectedResultCombos.append(
+    (
+        {
             "HashTableCandidate"  : [12,13]           , 
         }
         , 
@@ -54,6 +63,15 @@ ArgSetExpectedResultCombos.append(
     (
         {
             "HashTableCandidate"  : numpy.array([[1,2],[3,4],[5,6]])           , 
+        }
+        , 
+        False
+    )
+)
+ArgSetExpectedResultCombos.append(
+    (
+        {
+            "HashTableCandidate"  : [1,2,3]           , 
         }
         , 
         False

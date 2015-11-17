@@ -18,7 +18,7 @@ ConfidenceLevel = 0.95
 NumIterations = 1000 
 
 #Do some time testing:
-start = datetime.datetime.now()
+start = datetime.datetime.utcnow()
 
 k = 0
 while (k < NumIterations):
@@ -42,7 +42,7 @@ while (k < NumIterations):
 
     k = k + 1
 
-end = datetime.datetime.now()
+end = datetime.datetime.utcnow()
 
 timetaken =  end - start
 

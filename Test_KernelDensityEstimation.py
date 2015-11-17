@@ -14,7 +14,7 @@ import scipy
 import scipy.stats
 import random
 
-import Delete_NumpyKDE
+#import Trash_NumpyKDE
 
 #------------------------------------------------------------------------------
 import Library_KernelDensityEstimation
@@ -102,7 +102,9 @@ for FakeDataset in FakeDatasets:
 
     #COMPARE SCIPY_RESULTS TO RESULTS:
     #Check Single Result:
-    OrderOfMagnitudeRatio = Library_OrderOfMagnitudeRatio.Main(ScipySinglePointDensity, SinglePointDensity)
+    OrderOfMagnitudeRatio = Library_OrderOfMagnitudeRatio.Main(
+        ScipySinglePointDensity, 
+        SinglePointDensity)
     if (OrderOfMagnitudeRatio < 0.01):
         print "Test Success: ", ScipySinglePointDensity, "~", SinglePointDensity
     else:
@@ -141,7 +143,7 @@ Library_PrintFullTestSuccess.Main(FullTestSuccess)
 
 print "--Copied Scipy Implementation:"
 
-ScipyDensityKernelDensityEstimationFunction2 = Delete_NumpyKDE.gaussian_kde(ExampleDataset.T, bw_method = 'silverman')
+ScipyDensityKernelDensityEstimationFunction2 = Trash_NumpyKDE.gaussian_kde(ExampleDataset.T, bw_method = 'silverman')
 
 ScipySinglePointDensity2 = ScipyDensityKernelDensityEstimationFunction2(ExamplePoint)
 print "ScipySinglePointDensity2\n", ScipySinglePointDensity2, "\n"  

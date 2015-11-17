@@ -131,7 +131,7 @@ BatchSize = 500
 k = 0
 while ( k < GalaxyGroupCount):
     if (k % BatchSize == 0):
-        print '   ' , datetime.datetime.now(), "GalaxyGroups " , k, " to ", min(k + BatchSize, GalaxyGroupCount)
+        print '   ' , datetime.datetime.utcnow(), "GalaxyGroups " , k, " to ", min(k + BatchSize, GalaxyGroupCount)
 
     GalaxyGroupLocation = SurfaceProjectedGroupCenterLocations3D[k] 
     GalaxyGroupRadius   = SurfaceProjectedGroupRadii1D[k]
@@ -219,7 +219,7 @@ BatchSize = 500
 k = 0
 while ( k < GalaxyGroupCount):
     if (k % BatchSize == 0):
-        print '   ' , datetime.datetime.now(), "GalaxyGroups " , k, " to ", min(k + BatchSize, GalaxyGroupCount)
+        print '   ' , datetime.datetime.utcnow(), "GalaxyGroups " , k, " to ", min(k + BatchSize, GalaxyGroupCount)
     GalaxyGroupLocation = GalaxyGroupLocations[k] 
     GalaxyGroupRadius   = GalaxyGroupRadii[k]
 

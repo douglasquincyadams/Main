@@ -11,8 +11,8 @@ DESCRIPTION:
     The value add of this implementation, is to not specify or couple, methods, kernels, or datasets
     This function will only take the args and perform a density esitmation on a single point
     Speed of execution is sacrificed with the benefit of readability, and re-use.
-        There will be loops
-        There will be redudant multiplication which could be worked out by hand and avoided
+        There are loops
+        There is redudant multiplication which can be worked out by hand and avoided
         This code will be re-useable && re-tweakable for years to come
     
 ARGS:
@@ -49,20 +49,31 @@ import Library_Gaussian
 import Library_KernelDensityBandwidthSilverman
 import Type_NumpyTwoDimensionalDataset
 
-def Main(\
-    Point = None, \
-    Dataset = None, \
-    KernelFunction = Library_Gaussian.Main, \
-    BandwidthEstimator = Library_KernelDensityBandwidthSilverman.Main, \
-    BandwidthIsVariable = False, \
-    PrintExtra = False, \
-    CheckArguments = True ,\
+def Main(
+    Point = None, 
+    Dataset = None, 
+
+
+    KernelFunctionIsGaussian = True,
+    #For Gaussian Kernels, the following variables apply:
+    BandwidthEstimator = Library_KernelDensityBandwidthSilverman.Main, 
+    BandwidthIsVariable = False, 
+    CovarianceMatrix = None,
+    #CovarianceMatrixIdentityMultiple = None,
+    #NumPointsDataset = None,
+    #ReturnFunction = False,
+
+
+    KernelFunction = Library_Gaussian.Main, 
+
+    PrintExtra = False, 
+    CheckArguments = True ,
     ):
 
-    
-    NumDimPoint = Point.shape[0]
-    NumDimDataset = Dataset.shape[1]
-    NumPointsDataset = Dataset.shape[0]
+    if (CheckArguments):
+        NumDimPoint = Point.shape[0]
+        NumDimDataset = Dataset.shape[1]
+        NumPointsDataset = Dataset.shape[0]
 
     if (PrintExtra):
         print "NumDimPoint\n", NumDimPoint, "\n"
@@ -74,8 +85,8 @@ def Main(\
         #Null Arguments:
         if (Point == None):
             ArgumentErrorMessage += "(Point == None)" + "\n"
-        if (Dataset == None):
-            ArgumentErrorMessage += "(Dataset == None)" + "\n"
+        if (Dataset == None and CovarianceMatrix == None):
+            ArgumentErrorMessage += "(Dataset == None )" + "\n"
 
         #Point Shape Checking:
         if ( len(Point.shape) != 1 ):
@@ -99,35 +110,52 @@ def Main(\
                 print "-PrintExtra\n",PrintExtra , "\n"
             raise Exception(ArgumentErrorMessage)
 
-    if (PrintExtra):
-        print "Passed Argument Checking"
+        if (PrintExtra):
+            print "Passed Argument Checking"
 
-    CovarianceMatrix = None
-    if( BandwidthIsVariable == False ):
-        CovarianceMatrix = BandwidthEstimator(Dataset)
+    NumPointsDataset = Dataset.shape[0]
 
+    
     DensityNotNormalized = 0.0
-    for Datapoint in Dataset:
-        k = 0
-        if (BandwidthIsVariable): 
-            CovarianceMatrix = BandwidthEstimator(Dataset = Dataset, Point = Point)
+    if (KernelFunctionIsGaussian):
 
-        DensityNotNormalized += KernelFunction(\
-            Point = Datapoint, \
-            MeanPoint = Point, \
-            CovarianceMatrix = CovarianceMatrix, \
-            PrintExtra = False\
-            )
-        #print "DensityNotNormalized", DensityNotNormalized
+        if (CovarianceMatrix == None):
+            if( BandwidthIsVariable == False ):
+                CovarianceMatrix = BandwidthEstimator(Dataset)
 
-    #print "NumPointsDataset\n", NumPointsDataset, "\n"
+            #raise Exception('Not Implemented')
+            #DensityNotNormalized += Library_Gaussian.Main()
 
-    #print "ADAMS DensityNotNormalized\n", DensityNotNormalized, "\n"
+        if (PrintExtra):
+            print 'CovarianceMatrix'
+            print CovarianceMatrix
+
+            print 'Point'
+            print Point
+
+        for DatasetPoint in Dataset:
+            if (PrintExtra):
+                print 'DatasetPoint'
+                print DatasetPoint
+
+            Density = Library_Gaussian.Main( 
+                Point = Point, 
+                MeanPoint = DatasetPoint, 
+                CovarianceMatrix = CovarianceMatrix, 
+                ) 
+            if (PrintExtra):
+                print 'Density', Density
+            DensityNotNormalized += Density
+
+
+    else:
+        #for Datapoint in Dataset:
+        #    #Integral of DensityNotNormalized from -inf kd ball to inf kd ball == 1:
+        #    DensityNotNormalized += KernelFunction( Point = Datapoint )
+        raise Exception('Not Implemented')
 
     DensityNormalized = DensityNotNormalized*(1.0/NumPointsDataset)
-
-    #print "Function Ended"
-
+    
     return DensityNormalized
 
 

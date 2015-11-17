@@ -1,18 +1,27 @@
 """
 DESCRIPTION:
     Generates a polynomial of a speficied degree
+    The result format is a list of python functions each of which is a term in the polynomial
 
-
+ARGS:
+    Degree
+        Type:
+            <type>
+        Description:
+            The number of terms in the polynomial
 RETURNS:
 
-    List of functions, each of which is f(x) = x ^ n
-        [
-        function1(x) { return x^degree }	, 
-        function2(x) { return x^(degree-1) }	, 
-        .
-        . 
-        functionN(x) { return x^0 }		
-        ]
+    FunctionList
+
+        Description:
+            List of python functions, each of which is f(x) = x ^ n
+                [
+                function1(x) { return x^degree }	, 
+                function2(x) { return x^(degree-1) }	, 
+                .
+                . 
+                functionN(x) { return x^0 }		
+                ]
 
 """
 
@@ -40,3 +49,34 @@ def Main(
         FunctionList.append( TermFunction )
 
     return FunctionList
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

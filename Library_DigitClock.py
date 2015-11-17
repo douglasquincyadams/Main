@@ -37,7 +37,6 @@ def Main(DigitMaximums = None):
             current_through_k[n] = current_number[n]
             max_through_k[n] = DigitMaximums[n]
             n = n + 1
-        
         if (current_through_k == max_through_k):
             k = k + 1
         else:

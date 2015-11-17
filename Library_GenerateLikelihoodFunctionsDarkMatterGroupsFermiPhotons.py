@@ -125,8 +125,8 @@ def Main(
         ):
         Gamma = Parameters[2]
         ProbabilityPoissonPowerLaw = Library_Poisson.Main(
-            K = ObservationCount ,
-            Lambda = ExpectedNumberOfObservations ,
+            K = ObservationCount,
+            Lambda = ExpectedNumberOfObservations,
             Log = Log,
             )
         #print 'ProbabilityPoissonPowerLaw', ProbabilityPoissonPowerLaw

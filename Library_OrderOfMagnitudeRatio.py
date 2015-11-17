@@ -36,8 +36,17 @@ def Main(
     ):
 
     #Cast each entry to a numpy array of floats
-    Aarr = numpy.array( A ).astype(numpy.float)
-    Barr = numpy.array( B ).astype(numpy.float)
+    Aarr = None
+    Barr = None
+    try:
+        Aarr = numpy.array( A ).astype(numpy.float)
+        Barr = numpy.array( B ).astype(numpy.float)
+    except:
+        print 'A', A
+        print 'B', B
+        return None
+
+
 
     if (Aarr.shape == ()):
         Aarr = numpy.array([Aarr])

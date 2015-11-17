@@ -130,7 +130,7 @@ def Main(
     #    Latitudes                   = None ,
     #    Longitudes                  = None ,
         Zvalues                     = Log10Jsmooths_1D ,
-        Zlabel                      = ""    ,
+        Zlabel                      = "Log10DarkMatterDensity"    ,
         Shapes                      = Shapes ,
         Projection                  = "Rectangle" ,
     #    DirectoryGeneratedGraphs    = None ,

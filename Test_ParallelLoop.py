@@ -30,14 +30,14 @@ def Test0():
         Run as a basic loop (as though there was no parallelization: )
     """
 
-    start = datetime.datetime.now()
+    start = datetime.datetime.utcnow()
     ResultList = Library_ParallelLoop.Main(
         Function = ExampleFunction,
         ListOfArgSets = ListOfArgSets,
         Algorithm = 'loop',
         PrintExtra = True
         )
-    end = datetime.datetime.now()
+    end = datetime.datetime.utcnow()
     TimeTaken = end - start
 
     #[5736396, 454396537, 454396537, 454396537]
@@ -45,7 +45,7 @@ def Test0():
     #print 'ResultList loop'
     #pprint.pprint(ResultList)
 
-    #print 'TimeTaken', TimeTaken
+    print 'TimeTaken', TimeTaken
 
     #print '\n\n\n'
 
@@ -56,14 +56,14 @@ def Test0():
         Run using pp module:
     """
 
-    start = datetime.datetime.now()
+    start = datetime.datetime.utcnow()
     ResultList = Library_ParallelLoop.Main(
         Function = ExampleFunction,
         ListOfArgSets = ListOfArgSets,
         Algorithm = 'pp',
         PrintExtra = False
         )
-    end = datetime.datetime.now()
+    end = datetime.datetime.utcnow()
     TimeTaken = end - start
 
     #[5736396, 454396537, 454396537, 454396537]
@@ -71,10 +71,10 @@ def Test0():
     #print 'ResultList pp'
     #pprint.pprint(ResultList)
 
-    #print 'TimeTaken', TimeTaken
+    print 'TimeTaken', TimeTaken
     assert(ResultList[1] == 76127)
     assert(ResultList[2] == 277050)
-
+    print'Test0 Results Same'
 
 
 
@@ -102,14 +102,14 @@ def Test1():
     #print 'ListOfArgSets2'
     #pprint.pprint(ListOfArgSets2)
 
-    start = datetime.datetime.now()
+    start = datetime.datetime.utcnow()
     ResultList = Library_ParallelLoop.Main(
         Function = ExampleFunction2,
         ListOfArgSets = ListOfArgSets2,
         Algorithm = 'pp',
         PrintExtra = False
         )
-    end = datetime.datetime.now()
+    end = datetime.datetime.utcnow()
     TimeTaken = end - start
 
     #[5736396, 454396537, 454396537, 454396537]
@@ -117,7 +117,7 @@ def Test1():
     #print 'ResultList pp'
     #pprint.pprint(ResultList)
 
-    #print 'TimeTaken', TimeTaken
+    print 'TimeTaken', TimeTaken
 
 
     assert(ResultList[1] == 1020)
@@ -130,7 +130,6 @@ def Test3():
         Function = ExampleFunction2,
         ListOfArgSets = ListOfArgSets2,
         Algorithm = 'pp',
-        
         )
 
 
@@ -147,6 +146,24 @@ Test1()
 Test3()
 
 print 'Full Test Success'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

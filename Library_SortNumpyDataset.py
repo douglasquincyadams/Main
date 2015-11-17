@@ -77,11 +77,12 @@ RETURNS:
 import numpy
 import Type_NumpyTwoDimensionalDataset
 import Type_NumpyOneDimensionalDataset
-import Library_CastNumpyOneDimensionalDatasetToNumpyTwoDimensionalDataset
+import Library_NumpyOneDimensionalDatasetToNumpyTwoDimensionalDataset
 def Main( 
     Dataset = None,
     Axis = 0,
     PreserveOrder = False,
+    Reverse = False,
     CheckArguments = True,
     ):
     if ( CheckArguments ):
@@ -94,7 +95,7 @@ def Main(
             DatasetDimension = 0
         if ( Type_NumpyOneDimensionalDataset.Main(Dataset) ):
             DatasetDimension = 1
-            Dataset = Library_CastNumpyOneDimensionalDatasetToNumpyTwoDimensionalDataset.Main(Dataset)
+            Dataset = Library_NumpyOneDimensionalDatasetToNumpyTwoDimensionalDataset.Main(Dataset)
         elif ( Type_NumpyTwoDimensionalDataset.Main(Dataset) ):
             DatasetDimension = 2
         else:
@@ -104,7 +105,7 @@ def Main(
 
     #if (SortPriorityIndexes == []):
     if (Axis == 1) :
-        SortedDatasetIndexes = numpy.lexsort(Dataset)
+        SortedDatasetIndexes = numpy.lexsort(Dataset) #Sorts by last column first
         SortedDataset = numpy.array( Dataset.T[SortedDatasetIndexes] ).T
 
     elif (Axis == 0):
@@ -112,6 +113,12 @@ def Main(
         SortedDataset = numpy.array( Dataset[SortedDatasetIndexes] )
     else:
         raise (Exception ("Only Eligable Axis in [0,1]"))
+
+    if Reverse == True:
+        if (Axis == 1):
+            SortedDataset = numpy.fliplr(SortedDataset)
+        elif (Axis == 0 ):
+            SortedDataset = numpy.flipud(SortedDataset)
 
     if (CheckArguments):
         if (DatasetDimension == 1):
@@ -132,6 +139,8 @@ def Main(
     else:
         Result = SortedDataset
     
+
+
     return Result
 
 

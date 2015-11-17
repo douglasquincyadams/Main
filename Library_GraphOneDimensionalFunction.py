@@ -48,27 +48,49 @@ RETURNS:
 
 
 """
-
+import os
 import random
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy
 #------------------------------------------------------------------------------
+import Library_OrderOfMagnitudeRatioSmallCheck
+import Library_HardDifferenceSmallCheck
 import Type_NumpyTwoDimensionalDataset
-def Main(\
-    Functions = None,       \
-    DomainMinimumPoint = None,       \
-    DomainMaximumPoint = None,       \
-    ObservedDataset = None,         \
-    ShowObservedDataset = True, \
-    Xlabel = None, \
-    Ylabel = None, \
-    PlotTitle = None,\
-    CheckArguments = True,  \
-    PrintExtra = False,     \
-    SaveFigureFilePath = None,\
+import Library_ArraySwapTwoElements
+import Library_StringFileNameLastExtension
+
+def Main(
+    Functions = None, 
+    FunctionLabels = None,      
+    DomainMinimumPoint = None,       
+    DomainMaximumPoint = None,       
+    MainFunctionIndex = None,
+    MainFunctionOrderRatioRequirement = None,
+    MainFunctionDifferenceRequirement = None,
+    ObservedDataset = None,         
+    ShowObservedDataset = True, 
+    LogDomain = False, 
+    Xlabel = None, 
+    Ylabel = None, 
+    PlotTitle = None,
+    CheckArguments = True,  
+    PrintExtra = False,     
+    SaveFigureFilePath = None,
     ):
+
+
+    try:
+        font = {
+            'weight' : 'bold',
+            'size'   : 22 
+            }
+
+        matplotlib.rc('font', **font)
+    except:
+        pass
+
 
     if (CheckArguments):
         ArgumentErrorMessage = ""
@@ -111,14 +133,72 @@ def Main(\
     Step = (DomainMaximumPoint  - DomainMinimumPoint )/100.0
     Points = numpy.atleast_2d( np.arange(DomainMinimumPoint , DomainMaximumPoint , Step) ).T
 
-    for Function in Functions:
+    if (FunctionLabels == None):
+        FunctionLabels = [None]*len(Functions)
+    FunctionIndexes = range(len(Functions))
+
+    #Reorder functions and labels to have the main function first
+    if (MainFunctionIndex != None):
+        if (MainFunctionOrderRatioRequirement == None):
+            MainFunctionOrderRatioRequirement = numpy.inf
+        if (MainFunctionDifferenceRequirement == None):
+            MainFunctionDifferenceRequirement = numpy.inf
+        Functions = Library_ArraySwapTwoElements.Main(
+            Array = Functions,
+            Index1 = 0,
+            Index2 = MainFunctionIndex,
+            )
+        FunctionLabels = Library_ArraySwapTwoElements.Main(
+            Array = FunctionLabels,
+            Index1 = 0,
+            Index2 = MainFunctionIndex,
+            )
+        MainFunctionIndex = 0 
+
+    MainFunctionValues = []
+    for (Function, FunctionLabel, FunctionIndex) in zip(Functions, FunctionLabels, FunctionIndexes):
+        #print 'FunctionIndex', FunctionIndex
         Values = []
-        for Point in Points:
+        for (Point, PointIndex) in zip(Points, range(len(Points))):
             #print "Point", Point
-            Value = Function(Point)
+            Point = numpy.array( [float(Point) ] ) 
+            Value = numpy.nan
+            try:
+                Value = Function( Point )
+            except:
+                pass    
+        
+            Value = numpy.float64(Value)
+            ValueNotNan = not numpy.isnan(Value)
+
+            #If We are restricting the graph to show things near the main function, set other values to nans
+            if (FunctionIndex != MainFunctionIndex and MainFunctionIndex != None and ValueNotNan ):
+                #print 'MainFunctionIndex', MainFunctionIndex
+                MainFunctionValue = MainFunctionValues[PointIndex]
+                MainFunctionOrderOfMagnitudeRatioSmallCheck = Library_OrderOfMagnitudeRatioSmallCheck.Main( 
+                    Value, 
+                    MainFunctionValue, 
+                    MainFunctionOrderRatioRequirement ,
+                    PrintExtra = False,
+                    )
+
+                MainFunctionHardDifferenceSmallCheck = Library_HardDifferenceSmallCheck.Main( 
+                    Value, 
+                    MainFunctionValue, 
+                    MainFunctionDifferenceRequirement ,
+                    PrintExtra = False,
+                    )
+
+
+                if ( not MainFunctionOrderOfMagnitudeRatioSmallCheck or not MainFunctionHardDifferenceSmallCheck):
+                    Value = numpy.nan
+
             Values.append(Value)
 
-        plt.plot(Points,  Values)
+        if (FunctionIndex == MainFunctionIndex):
+            MainFunctionValues = Values
+
+        plt.plot(Points,  Values, label = FunctionLabel)
 
     plt.grid(True)
 
@@ -129,9 +209,17 @@ def Main(\
         plt.ylabel(Ylabel)
     if (PlotTitle != None):
         plt.title(PlotTitle)
+    if (not None in FunctionLabels):
+        plt.legend(loc = 'best')
 
     if (SaveFigureFilePath != None):
+        SaveFigureFilePath = os.path.realpath(SaveFigureFilePath)
+        if (not Library_StringFileNameLastExtension.Main(SaveFigureFilePath) in ['png', '.jpg'] ):
+            SaveFigureFilePath += '.png'
         plt.savefig( SaveFigureFilePath )
+
+
+
 
     return plt
 

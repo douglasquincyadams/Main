@@ -2,8 +2,52 @@
 SOURCE:
     http://stackoverflow.com/questions/6527633/how-can-i-make-a-deepcopy-of-a-function-in-python
 
-    **Cannot find the official documentation for `types.FunctionType` 
-        Must have named arguments somehwere, and cannot find with google
+        **Cannot find the official documentation for `types.FunctionType` 
+            Must have named arguments somehwere, and cannot find with google
+
+
+    http://nullege.com/codes/search/types.FunctionType
+    
+        types.FunctionType
+            function(code, globals[, name[, argdefs[, closure]]])
+
+
+    http://snipplr.com/view/17819/
+
+        import types
+         
+        def create_function(name, args):
+         
+            def y(): pass
+         
+            y_code = types.CodeType(args, \
+                        y.func_code.co_nlocals, \
+                        y.func_code.co_stacksize, \
+                        y.func_code.co_flags, \
+                        y.func_code.co_code, \
+                        y.func_code.co_consts, \
+                        y.func_code.co_names, \
+                        y.func_code.co_varnames, \
+                        y.func_code.co_filename, \
+                        name, \
+                        y.func_code.co_firstlineno, \
+                        y.func_code.co_lnotab)
+         
+            return types.FunctionType(y_code, y.func_globals, name)
+         
+        myfunc = create_function('myfunc', 3)
+         
+        print repr(myfunc)
+        print myfunc.func_name
+        print myfunc.func_code.co_argcount
+         
+        myfunc(1,2,3,4)
+        # TypeError: myfunc() takes exactly 3 arguments (4 given)
+
+    http://late.am/post/2012/03/26/exploring-python-code-objects.html
+
+    http://stackoverflow.com/questions/427453/how-can-i-get-the-source-code-of-a-python-function
+
 
 DESCRIPTION:
     Makes a deep copy of a function in python
@@ -65,33 +109,16 @@ def Main(
             pass
 
         elif( Type_HashTable.Main(NewDefaults) ):
-            #Cast the dictionary values into a tuple
-            FunctionArgumentInformation = inspect.getargspec(Function)       
-
-            FunctionArgumentNamesInOrder = FunctionArgumentInformation.args
-            if (PrintExtra):
-                print 'FunctionArgumentNamesInOrder', FunctionArgumentNamesInOrder
-           
-            #TODO: Hybridizaion of any partial NewDefaults, with the original function defaults 
-            #FunctionDefaultValues = FunctionArgumentInformation.defaults #Tuple starts from the first Named Argument 
-            #print 'FunctionDefaultValues', FunctionDefaultValues
-
-            #Generate a list of new default values in order:
-            NewDefaultsValueList = []
-            for FunctionArgumentName in FunctionArgumentNamesInOrder:
-                NewDefaultsValueList.append(NewDefaults[FunctionArgumentName])
-    
-            NewDefaults = copy.deepcopy( tuple(NewDefaultsValueList) )
-            if (PrintExtra):
-                print 'NewDefaults', NewDefaults
 
             #TODO: We will ignore **kwards, and *args for now
             #FunctionSpecialArgsName = FunctionArgumentNamesInOrder[1] 
             #print 'FunctionSpecialArgsName', FunctionSpecialArgsName
             #FunctionSpecialKwarsName = FunctionArgumentNamesInOrder[2]
             #print 'FunctionSpecialKwarsName', FunctionSpecialKwarsName
+            pass
 
         else:
+            ArgumentErrorMessage += 'NewDefaults == ' + str(NewDefaults) + '\n'
             ArgumentErrorMessage += 'NewDefaults must be of type `None`, `tuple`, or `Type_HashTable`'
 
         if (len(ArgumentErrorMessage) > 0 ):
@@ -101,38 +128,143 @@ def Main(
             raise Exception(ArgumentErrorMessage)
 
     if (PrintExtra):
-        #All function property information:
-        
         FunctionProperties = dir(Function)
         print 'FunctionProperties'
         pprint.pprint(FunctionProperties)
 
+
+    #DEFINE THE NEW FUNCTION NAME:
+    FinalNewFunctionName = copy.deepcopy(NewName) or Function.__name__
+
+    if (PrintExtra):
+        print 'FinalNewFunctionName'
+        print FinalNewFunctionName
+
+
+    #DEFINE THE NEW FUNCTION DEFAULTS:
+
+    FinalNewDefaultArgumentValues = tuple()
+    FinalNewDefaultArgumentNames = tuple()
+
+    #Get original Function Defaults:
+    FunctionArgumentInformation = inspect.getargspec(Function)       
+    OriginalFunctionDefaults = Function.__defaults__
+    OriginalArgumentDefaultCount = 0
+    if (OriginalFunctionDefaults != None): 
+        OriginalArgumentDefaultCount = len(OriginalFunctionDefaults)
+    OriginalFunctionArgumentNamesInOrder = FunctionArgumentInformation.args
+    OriginalFunctionArgumentsCount = len(OriginalFunctionArgumentNamesInOrder)
+
+    if (PrintExtra):
+        print 'OriginalFunctionDefaults', OriginalFunctionDefaults
+        print 'OriginalFunctionArgumentNamesInOrder', OriginalFunctionArgumentNamesInOrder
+
+    NewFunctionArgumentsCount = 0
+
+    if (type(NewDefaults) == type(None)):
+        FinalNewDefaultArgumentValues = OriginalFunctionDefaults
+        FinalNewDefaultArgumentNames = tuple(OriginalFunctionArgumentNamesInOrder)
+
+    elif (type(NewDefaults) is tuple):
+        NewFunctionArgumentsCount = len(NewDefaults)
+        FinalNewDefaultArgumentValues = tuple(NewDefaults)
+        FinalNewDefaultArgumentNames = tuple(OriginalFunctionArgumentNamesInOrder)
+        
+    elif (Type_HashTable.Main(NewDefaults)):
+        NewFunctionArgumentsCount = len(NewDefaults.keys())
+
+        #Figure out the new function defaults
+        NewDefaultValuesList = []
+        NewDefaultNamesList = []
+        for OriginalFunctionArgumentNumber in range(OriginalFunctionArgumentsCount):
+            OriginalArgumentName = OriginalFunctionArgumentNamesInOrder[OriginalFunctionArgumentNumber]
+            NewArgumentDefaultValue = None
+            if OriginalArgumentName in NewDefaults:
+                NewArgumentDefaultValue = NewDefaults[OriginalArgumentName]
+            NewDefaultValuesList.append(NewArgumentDefaultValue)
+            NewDefaultNamesList.append(OriginalArgumentName)
+
+        #Fill in any missing new default values with the old default ones
+        k = 0
+        while (k < OriginalArgumentDefaultCount):
+            if (NewDefaultValuesList[ OriginalFunctionArgumentsCount - 1 - k] == None):
+                if (OriginalFunctionDefaults[OriginalArgumentDefaultCount -1 -k] != None):
+                    NewDefaultValuesList[ OriginalFunctionArgumentsCount - 1 - k] = OriginalFunctionDefaults[OriginalArgumentDefaultCount -1 -k] 
+            k = k + 1
+        if (PrintExtra):
+            print 'NewDefaultValuesList', NewDefaultValuesList
+
+        #Find NewDefaultKeys which are not listed as original Function arguements
+        NewDefaultArgumentNames = set(NewDefaults.keys())
+
+        OriginalDefaultArgumentNames = set(OriginalFunctionArgumentNamesInOrder)
+
+        NewDefaultArgumentNamesToAdd = NewDefaultArgumentNames - OriginalDefaultArgumentNames
+
+        if (PrintExtra):
+            print 'NewDefaultArgumentNames', NewDefaultArgumentNames
+            print 'OriginalDefaultArgumentNames', OriginalDefaultArgumentNames
+            print 'NewDefaultArgumentNamesToAdd', NewDefaultArgumentNamesToAdd
+
+        for NewDefaultArgumentName in NewDefaultArgumentNamesToAdd:
+            NewDefaultArgumentValue = NewDefaults[NewDefaultArgumentName]
+            NewDefaultValuesList.append(NewDefaultArgumentValue)
+            NewDefaultNamesList.append(NewDefaultArgumentName)
+            if (PrintExtra):
+                print '  NewDefaultArgumentName', NewDefaultArgumentName
+                print '  NewDefaultArgumentValue', NewDefaultArgumentValue
+
+        FinalNewDefaultArgumentValues = tuple(NewDefaultValuesList) #<- Ignore the new arguments
+        FinalNewDefaultArgumentNames = tuple(NewDefaultNamesList)
+
+    if (PrintExtra):
+        print 'FinalNewDefaultArgumentValues'
+        print FinalNewDefaultArgumentValues
+
+        print 'FinalNewDefaultArgumentNames'
+        print FinalNewDefaultArgumentNames
+
+    FinalNewFunctionArgumentsCount = len(FinalNewDefaultArgumentNames)
+    #Create a copy of the new function code:
+    #NewFunctionCode = Function.__code__
+    NewFunctionCode = types.CodeType(
+        FinalNewFunctionArgumentsCount, 
+        Function.func_code.co_nlocals, 
+        Function.func_code.co_stacksize, 
+        Function.func_code.co_flags, 
+        Function.func_code.co_code, 
+        Function.func_code.co_consts, 
+        Function.func_code.co_names, 
+        FinalNewDefaultArgumentNames, #Function.func_code.co_varnames, 
+        Function.func_code.co_filename, 
+        FinalNewFunctionName, 
+        Function.func_code.co_firstlineno, 
+        Function.func_code.co_lnotab,
+        )
+
     #Create a new function by invoking the python function `types.FunctionType`
-    #   Documentation for this function is thus unfound
-    #   TODO: Find the documentation for this
     FunctionCopy = types.FunctionType(
-        Function.__code__, 
+        NewFunctionCode, 
         Function.__globals__, 
-        copy.deepcopy(NewName) or Function.__name__,
-        NewDefaults or Function.__defaults__ , 
+        FinalNewFunctionName,
+        FinalNewDefaultArgumentValues , 
         Function.__closure__
         )
+
+    if (PrintExtra):
+        print 'FunctionCopy.__defaults__ '
+        print FunctionCopy.__defaults__ 
+        FunctionCopyArgumentInformation = inspect.getargspec(FunctionCopy)       
+        print 'FunctionCopyArgumentInformation'
+        print FunctionCopyArgumentInformation
 
     # in case Function was given attrs 
     #   Note: 
     #       * The original version of this dict copy was a shallow copy):
     #       * It is unknown if using the copy.deepcopy method fixes this to be a true deep copy
-    #   TODO: find out the deep copy `Goodness` of this line of code
     FunctionCopy.__dict__.update(copy.deepcopy( Function.__dict__) ) 
 
     return FunctionCopy
-
-
-
-
-
-
-
 
 
 

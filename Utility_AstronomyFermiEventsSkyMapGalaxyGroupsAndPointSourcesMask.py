@@ -182,7 +182,7 @@ if (
     k = 0
     while ( k < PointSourcesCount):
         if (k % BatchSize == 0):
-            print '   ' , datetime.datetime.now(), "PointSources " , k, " to ", min(k + BatchSize, PointSourcesCount)
+            print '   ' , datetime.datetime.utcnow(), "PointSources " , k, " to ", min(k + BatchSize, PointSourcesCount)
 
         PointSourceLocation = SurfaceProjectedPointSourceLocations3D[k] 
         PointSourceRadius   = SurfaceProjectedPointSourceRadii[k]
@@ -224,7 +224,7 @@ if (
     k = 0 
     while ( k < GalaxyGroupCount):
         if (k % BatchSize == 0):
-            print '   ' , datetime.datetime.now(), "GalaxyGroups " , k, " to ", min(k + BatchSize, GalaxyGroupCount)
+            print '   ' , datetime.datetime.utcnow(), "GalaxyGroups " , k, " to ", min(k + BatchSize, GalaxyGroupCount)
         GalaxyGroupLocation = SurfaceProjectedGroupCenterLocations3D[k] #numpy.array([180.0, 0.0])
         GalaxyGroupRadius   = SurfaceProjectedGroupRadii1D[k]
         IndicesOfPhotonsNotFromPointSourcesFromGalaxyGroups += PhotonLocationsNotFromPointSources3DProjectedCartesianKDTree.query_ball_point( GalaxyGroupLocation, GalaxyGroupRadius  )

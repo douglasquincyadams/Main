@@ -91,7 +91,7 @@ def Main(
     
 
     for PossibleAnnihilationCrossSection in PossibleAnnihilationCrossSections:
-        print 'datetime.datetime.now()', datetime.datetime.now()
+        print 'datetime.datetime.utcnow()', datetime.datetime.utcnow()
         print 'PossibleAnnihilationCrossSection', PossibleAnnihilationCrossSection
 
         #Get the functions we need for this combination of wimpmass and cross section:
@@ -113,7 +113,7 @@ def Main(
         if (TrialNumber == 0):
             MaximalParameters = InitialGuessParameters
 
-        ParameterSearchStartTime = datetime.datetime.now()
+        ParameterSearchStartTime = datetime.datetime.utcnow()
 
         if(logDelta03<0.05)&SuccessSeries[3]&TheZeroValue:
             print 'Generating Spline for Interpolation of Maximum Likelihood && Parameters'
@@ -214,7 +214,7 @@ def Main(
         print '         logDelta03',logDelta03   
         print '         SeriesCrossSections',SeriesCrossSections 
         print '         SuccessSeries',SuccessSeries	
-        ParameterSearchEndTime = datetime.datetime.now()            
+        ParameterSearchEndTime = datetime.datetime.utcnow()            
         ParameterSearchTimeTaken = ParameterSearchEndTime - ParameterSearchStartTime
         print 'ParameterSearchTimeTaken', ParameterSearchTimeTaken
 

@@ -23,7 +23,7 @@ def Main(
     A = None, 
     B = None, 
     Max = None,
-    PrintExtra = True,
+    PrintExtra = False,
     CheckArguments = True,
     ):
 
