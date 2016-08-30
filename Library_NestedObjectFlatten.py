@@ -63,13 +63,15 @@ def Main(
         elif isinstance(l, (dict)):
             for dictkey in l.keys():
                 out.extend(flatten(l[dictkey]))
-
         elif isinstance(l, (str, int, unicode, float)):
             out.append(l)
         elif isinstance(l , (numpy.ndarray, numpy.generic) ):
             #print 'IS NUMPY ARRAY'
-            for item in list( l.flatten() ):
-                out.extend( flatten( item ) )
+            #for item in list( l.flatten() ):
+            #    out.extend( flatten( item ) )
+        
+            out.extend( list( l.flatten() ))
+
         else: #Unkown type -> then we append the flat list with the item
             out.append(l)
             

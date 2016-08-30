@@ -20,6 +20,8 @@ print Type_Number.Main('Hello World')
 
 print Type_Number.Main(False + 1)
 
+print Type_Number.Main(numpy.inf)
+
 print 'DONE'
 """
 ArgSetExpectedResultCombos = []

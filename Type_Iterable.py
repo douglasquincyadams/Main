@@ -28,13 +28,16 @@ RETURNS:
 """
 
 def Main(
-    IterableCandidate = None
+    IterableCandidate = None,
+    StringAllowed = True,
     ):
 
     Result = None
 
     try:
         iterator = iter(IterableCandidate)
+        if isinstance(IterableCandidate, str) and (not StringAllowed):
+            return False
     except TypeError:
         # not iterable
         Result = False

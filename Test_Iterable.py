@@ -39,6 +39,18 @@ ArgSetExpectedResultCombos.append(
         True
     )
 )
+
+ArgSetExpectedResultCombos.append(
+    (
+        {
+            "IterableCandidate"  : 'HelloWorld'           , 
+            "StringAllowed" : False,
+        }
+        , 
+        False
+    )
+)
+
 ArgSetExpectedResultCombos.append(
     (
         {
@@ -48,6 +60,18 @@ ArgSetExpectedResultCombos.append(
         True
     )
 )
+
+ArgSetExpectedResultCombos.append(
+    (
+        {
+            "IterableCandidate"  : numpy.array([[1,2],[3,4],[5,6]])           , 
+            "StringAllowed" : False,
+        }
+        , 
+        True
+    )
+)
+
 ArgSetExpectedResultCombos.append(
     (
         {
@@ -55,6 +79,26 @@ ArgSetExpectedResultCombos.append(
         }
         , 
         False
+    )
+)
+
+ArgSetExpectedResultCombos.append(
+    (
+        {
+            "IterableCandidate"  : ['alpha','beta']           , 
+        }
+        , 
+        True
+    )
+)
+ArgSetExpectedResultCombos.append(
+    (
+        {
+            "IterableCandidate"  : ['alpha','beta']           , 
+            "StringAllowed" : False,
+        }
+        , 
+        True
     )
 )
 

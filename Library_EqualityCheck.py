@@ -48,10 +48,12 @@ RETURNS:
 """
 import pickle
 import Type_SympyExpression
+import Type_Number
 import Library_SympyExpressionEquality
 def Main(
     ObjectsTuple = None,
-
+    HardDifferenceMax = None,
+    OrderOfMagnitudeRatioMax = None,
     CheckArguments = True,
     PrintExtra = False,
     ):
@@ -70,14 +72,20 @@ def Main(
     FirstObject = ObjectsTuple[0]
 
     ObjectType = None
-    if ( Type_SympyExpression.Main(FirstObject) ):
+    if (Type_Number.Main(FirstObject) ):
+        ObjectType = 'number'
+    elif ( Type_SympyExpression.Main(FirstObject) ):
         ObjectType = 'sympy'
     #elif (Type_stuff la do di da):
     #    ObjectType = 'la do di da'
 
     for Object in ObjectsTuple:
         if(ObjectType == 'sympy'):
-            Result = Result and Library_SympyExpressionEquality.Main( (Object , FirstObject) )
+            Result = Result and Library_SympyExpressionEquality.Main( 
+                (Object , FirstObject),
+                HardDifferenceMax = HardDifferenceMax,
+                OrderOfMagnitudeRatioMax = OrderOfMagnitudeRatioMax,
+                )
         else:
             Result = Result and (pickle.dumps(Object) == pickle.dumps(FirstObject))
 

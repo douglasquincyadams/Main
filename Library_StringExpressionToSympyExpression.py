@@ -20,9 +20,22 @@ RETURNS:
 
 import sympy
 import sympy.parsing.sympy_parser #Requires second import for unknown reason
+import Type_SympyExpression
 #def StringExpressionToSympyExpression(
 def Main(
     StringExpression = None,
     ):
-    SympyExpression = sympy.parsing.sympy_parser.parse_expr(StringExpression)
+
+    SympyExpression = None
+    if isinstance(StringExpression, str):
+        SympyExpression = sympy.parsing.sympy_parser.parse_expr(StringExpression)
+    else:
+        raise Exception('StringExpression is bs type')
+
     return SympyExpression
+
+
+
+
+
+

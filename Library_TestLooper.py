@@ -91,6 +91,8 @@ def Main(
     MaxFlatResultLength = None,
     ResultOrderMatters = True, 
 
+    EqualityCheckFunction = None,
+
     CheckArguments = True,
     PrintExtra = True,
     ):
@@ -108,6 +110,7 @@ def Main(
 
     k = 0
     for ArgSet, ExpectedResult in ArgSetExpectedResultCombos:
+        print "-----------------------------------------------------------------"
         print "Running Test ", k
 
         SingleResultCorrectnessCheck = True
@@ -143,6 +146,8 @@ def Main(
                 MinFlatResultLength = MinFlatResultLength,
                 MaxFlatResultLength = MaxFlatResultLength,
                 ResultOrderMatters = ResultOrderMatters, 
+
+                EqualityCheckFunction = EqualityCheckFunction,
 
                 CheckArguments = CheckArguments,
                 PrintExtra = PrintExtra,

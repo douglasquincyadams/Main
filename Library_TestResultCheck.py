@@ -42,11 +42,15 @@ def Main(
 
     OrderOfMagnitudeRatioMax = None,
     HardDifferenceMax = None,
+
     DoEqualityCheck = True,
     DoContainmentCheck = False,
     MinFlatResultLength = None,
     MaxFlatResultLength = None,
     ResultOrderMatters = True, 
+
+
+    EqualityCheckFunction = None,
 
     CheckArguments = True,
     PrintExtra = False,
@@ -115,6 +119,7 @@ def Main(
             CurrentExpectedResult = ExpectedResult[CurrentResultNumber]
 
 
+
             SingleEqualityCheck = True
             SingleOrderOfMagnitudeRatioSmallCheck = True
             SingleHardDifferenceSmallCheck = True
@@ -122,7 +127,8 @@ def Main(
             #We know the result is a number
             if ( Type_Number.Main( CurrentExpectedResult )  ):
                 #Cast the number to same type so each time comparison works
-                CurrentExpectedResult = float(CurrentExpectedResult)
+                CurrentExpectedResult = complex(CurrentExpectedResult).real + complex(CurrentExpectedResult).imag
+                CurrentResult = complex(CurrentResult).real + complex(CurrentResult).imag
                 if ( OrderOfMagnitudeRatioMax != None ):
                     SingleResultOrderOfMagnitudeRatioSmallCheckResult = Library_OrderOfMagnitudeRatioSmallCheck.Main(
                         CurrentResult , 
@@ -156,7 +162,14 @@ def Main(
             #We know the result is not a number:
             else:
                 if (DoEqualityCheck ):
-                    SingleEqualityCheck = Library_EqualityCheck.Main( (CurrentResult,  CurrentExpectedResult) )
+                    if (EqualityCheckFunction == None):
+                        EqualityCheckFunction = Library_EqualityCheck.Main
+                    #print 'HardDifferenceMax (in Lib Test Res Check)', HardDifferenceMax
+                    SingleEqualityCheck = EqualityCheckFunction( 
+                        (CurrentResult,  CurrentExpectedResult), 
+                        HardDifferenceMax = HardDifferenceMax,
+                        OrderOfMagnitudeRatioMax = OrderOfMagnitudeRatioMax, 
+                        )
                     EqualityCheck = EqualityCheck and SingleEqualityCheck
                 if (DoContainmentCheck):
                     SingleContainmentCheck = CurrentExpectedResult in CurrentResult

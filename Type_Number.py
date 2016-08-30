@@ -25,12 +25,21 @@ RETURNS:
 
 
 """
-
+import numpy
 def Main(
     NumberCandidate = None
     ):
 
     Result = None
+
+    if isinstance(NumberCandidate, (float, int, complex)):
+        return True
+
+    try:
+        if numpy.isinf(NumberCandidate):
+            return True
+    except:
+        pass
 
     try:
         NumberFloat = float(NumberCandidate)
