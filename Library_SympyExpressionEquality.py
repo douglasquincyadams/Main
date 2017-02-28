@@ -79,7 +79,7 @@ def Main(
             raise Exception(ArgumentErrorMessage)
 
     PrintExtra = False
-    if (HardDifferenceMax == None):
+    if (HardDifferenceMax is None):
         HardDifferenceMax = 0.0
 
 

@@ -100,16 +100,16 @@ def Main(
     pprint.pprint( ExpectedResult )
 
     #Check Lengths
-    if (MinFlatResultLength == None):
+    if (MinFlatResultLength is None):
         MinFlatResultLength = NumberExpectedResults
-    if (MaxFlatResultLength == None):
+    if (MaxFlatResultLength is None):
         MaxFlatResultLength = NumberExpectedResults
     print 'MinFlatResultLength', MinFlatResultLength
     NumberResultsCheck = ( NumberResults >= MinFlatResultLength ) and ( NumberResults <= MaxFlatResultLength )
     print 'NumberResultsCheck', NumberResultsCheck
 
     #Loop through and check value correctness now:
-    ValuesMatter = (OrderOfMagnitudeRatioMax != None) or (HardDifferenceMax != None) or (DoEqualityCheck)
+    ValuesMatter = (OrderOfMagnitudeRatioMax is not None) or (HardDifferenceMax is not None) or (DoEqualityCheck)
     print 'ValuesMatter', ValuesMatter
 
     if (ValuesMatter):
@@ -129,7 +129,7 @@ def Main(
                 #Cast the number to same type so each time comparison works
                 CurrentExpectedResult = complex(CurrentExpectedResult).real + complex(CurrentExpectedResult).imag
                 CurrentResult = complex(CurrentResult).real + complex(CurrentResult).imag
-                if ( OrderOfMagnitudeRatioMax != None ):
+                if ( OrderOfMagnitudeRatioMax is not None ):
                     SingleResultOrderOfMagnitudeRatioSmallCheckResult = Library_OrderOfMagnitudeRatioSmallCheck.Main(
                         CurrentResult , 
                         CurrentExpectedResult, 
@@ -141,7 +141,7 @@ def Main(
                     OrderOfMagnitudeRatioSmallCheckResult = OrderOfMagnitudeRatioSmallCheckResult and SingleResultOrderOfMagnitudeRatioSmallCheckResult
 
 
-                if (HardDifferenceMax != None) :
+                if (HardDifferenceMax is not None) :
                     SingleValueHardDifferenceSmallCheckResult = Library_HardDifferenceSmallCheck.Main(
                         CurrentResult, 
                         CurrentExpectedResult, 
@@ -162,7 +162,7 @@ def Main(
             #We know the result is not a number:
             else:
                 if (DoEqualityCheck ):
-                    if (EqualityCheckFunction == None):
+                    if (EqualityCheckFunction is None):
                         EqualityCheckFunction = Library_EqualityCheck.Main
                     #print 'HardDifferenceMax (in Lib Test Res Check)', HardDifferenceMax
                     SingleEqualityCheck = EqualityCheckFunction( 

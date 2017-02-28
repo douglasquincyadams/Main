@@ -35,10 +35,10 @@ def Main(
     if( CheckArguments):
         ArgumentErrorMessage = ""
         #Null Args:
-        if (A == None):
-            ArgumentErrorMessage += "(A == None)"
-        if (B == None):
-            ArgumentErrorMessage += "(B == None)"
+        if (A is None):
+            ArgumentErrorMessage += "(A is None)"
+        if (B is None):
+            ArgumentErrorMessage += "(B is None)"
         if (len(Aarr)!= len(Barr)):
             ArgumentErrorMessage += "(len(A)!= len(B))\n"
             ArgumentErrorMessage += "  len(Aarr) =="  + str(len(Aarr)) + "\n"

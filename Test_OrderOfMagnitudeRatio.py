@@ -33,7 +33,7 @@ ExpectedResultList = [
     0.,
     1.,
     3., 
-    "(A == None)(B == None)", 
+    "(A is None)(B is None)", 
     float('Inf'), 
     float('Inf'), 
     4.0,

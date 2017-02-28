@@ -65,10 +65,10 @@ def Main(
 
     #Args have `None` put as a variable defaults on purpose:
     #   -> `None` can be passed by name explicitly this way 
-    if (Restrictions == None): 
+    if (Restrictions is None): 
         Restrictions = {}
 
-    if (VariableNames == None):
+    if (VariableNames is None):
         VariableNames = [str(var) for var in SympyExpression.free_symbols]
 
     Result = None

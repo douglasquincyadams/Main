@@ -38,7 +38,7 @@ def Main(
     Timezone = "NAN"
     ):
     
-    if (Datetime == None):
+    if (Datetime is None):
         raise Exception('Datetime cannot be null')
 
     DateString = ""

@@ -28,7 +28,7 @@ def Main(
 
     SympyExpression = None
     if isinstance(StringExpression, str):
-        SympyExpression = sympy.parsing.sympy_parser.parse_expr(StringExpression)
+        SympyExpression = sympy.parsing.sympy_parser.parse_expr(StringExpression, evaluate=False)
     else:
         raise Exception('StringExpression is bs type')
 
