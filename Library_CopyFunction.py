@@ -150,7 +150,7 @@ def Main(
     FunctionArgumentInformation = inspect.getargspec(Function)       
     OriginalFunctionDefaults = Function.__defaults__
     OriginalArgumentDefaultCount = 0
-    if (OriginalFunctionDefaults != None): 
+    if (OriginalFunctionDefaults is not None): 
         OriginalArgumentDefaultCount = len(OriginalFunctionDefaults)
     OriginalFunctionArgumentNamesInOrder = FunctionArgumentInformation.args
     OriginalFunctionArgumentsCount = len(OriginalFunctionArgumentNamesInOrder)
@@ -187,8 +187,8 @@ def Main(
         #Fill in any missing new default values with the old default ones
         k = 0
         while (k < OriginalArgumentDefaultCount):
-            if (NewDefaultValuesList[ OriginalFunctionArgumentsCount - 1 - k] == None):
-                if (OriginalFunctionDefaults[OriginalArgumentDefaultCount -1 -k] != None):
+            if (NewDefaultValuesList[ OriginalFunctionArgumentsCount - 1 - k] is None):
+                if (OriginalFunctionDefaults[OriginalArgumentDefaultCount -1 -k] is not None):
                     NewDefaultValuesList[ OriginalFunctionArgumentsCount - 1 - k] = OriginalFunctionDefaults[OriginalArgumentDefaultCount -1 -k] 
             k = k + 1
         if (PrintExtra):

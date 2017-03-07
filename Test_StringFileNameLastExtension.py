@@ -11,7 +11,7 @@ assert( expected_result == result )
 
 result2 = Library_StringFileNameLastExtension.Main("hello")
 print 'result2          ', result2
-assert( result2 == None)
+assert( result2 is None)
 
 result3 = Library_StringFileNameLastExtension.Main("hello.txt.bfe")
 print 'result3          ', result3

@@ -43,7 +43,7 @@ def Main(
     ):
 
     #Must not be null
-    if Dataset == None:
+    if Dataset is None:
         if (PrintExtra):
             print "Emtpy Dataset: Must not be null"
         return False 
