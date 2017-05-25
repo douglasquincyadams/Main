@@ -14,7 +14,17 @@ for Sentence in DrSuessNovel:
     print Sentence
 
 
-
+#Prints out:
+"""
+['one', 'fish', 'blue']
+['two', 'fish', 'blue']
+['one', 'wish', 'blue']
+['two', 'wish', 'blue']
+['one', 'fish', 'red']
+['two', 'fish', 'red']
+['one', 'wish', 'red']
+['two', 'wish', 'red']
+"""
 
 #LOL THIS WORKS....
 """
