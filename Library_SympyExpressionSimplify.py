@@ -30,6 +30,7 @@ RETURNS:
         Description:
 """
 import sympy
+import sympy.sets
 import copy
 import Library_SympyExpressionPrintInfo
 
@@ -49,36 +50,44 @@ def Main(
                 print "ArgumentErrorMessage:\n", ArgumentErrorMessage
             raise Exception(ArgumentErrorMessage)
 
-    #sin = copy.deepcopy(sympy.sin)
-    #cos = copy.deepcopy(sympy.cos)
-    #exp = copy.deepcopy(sympy.exp)
 
-    #make a copy of input
-    #Result = copy.deepcopy(SympyExpression)
-    #if(PrintExtra): Library_SympyExpressionPrintInfo.Main(Result)
-    Result = SympyExpression.simplify()
+    try:
+        #sin = copy.deepcopy(sympy.sin)
+        #cos = copy.deepcopy(sympy.cos)
+        #exp = copy.deepcopy(sympy.exp)
 
-    #Force Trig Equalities, by plugging in the exp:
-    Result = Result.rewrite(sympy.sin, sympy.exp).rewrite(sympy.cos, sympy.exp)
-    if(PrintExtra):Library_SympyExpressionPrintInfo.Main(Result)
-    
-    #Simplify the Exponentials:
-    Result = Result.trigsimp()
-    if(PrintExtra):Library_SympyExpressionPrintInfo.Main(Result)
+        #make a copy of input
+        #Result = copy.deepcopy(SympyExpression)
+        #if(PrintExtra): Library_SympyExpressionPrintInfo.Main(Result)
+        Result = SympyExpression.simplify()
 
-    #Force consts to be evaluated:
-    Result = Result.evalf()
-    if(PrintExtra):Library_SympyExpressionPrintInfo.Main(Result)
+        #Force Trig Equalities, by plugging in the exp:
+        Result = Result.rewrite(sympy.sin, sympy.exp).rewrite(sympy.cos, sympy.exp)
+        if(PrintExtra):Library_SympyExpressionPrintInfo.Main(Result)
+        
+        #Simplify the Exponentials:
+        Result = Result.trigsimp()
+        if(PrintExtra):Library_SympyExpressionPrintInfo.Main(Result)
 
-    #Do the built in symplifies:
-    Result = Result.simplify().cancel().expand() #.logcombine()
-    if(PrintExtra):Library_SympyExpressionPrintInfo.Main(Result)
+        #Force consts to be evaluated:
+        Result = Result.evalf()
+        if(PrintExtra):Library_SympyExpressionPrintInfo.Main(Result)
 
-    #Make another copy
-    #FinalResult = copy.deepcopy(Result)
-    #if(PrintExtra):Library_SympyExpressionPrintInfo.Main(FinalResult)
+        #Do the built in symplifies:
+        Result = Result.simplify().cancel().expand() #.logcombine()
+        if(PrintExtra):Library_SympyExpressionPrintInfo.Main(Result)
+
+        #Make another copy
+        #FinalResult = copy.deepcopy(Result)
+        #if(PrintExtra):Library_SympyExpressionPrintInfo.Main(FinalResult)
+    except:
+        Result = SympyExpression
+
 
     return Result 
+
+
+
 
 
 

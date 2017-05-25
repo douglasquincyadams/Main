@@ -2,7 +2,9 @@
 SOURCES:
 
 DEFINITION:
-    Creates an outer product possibility space given a number of differnt events accross differnt dimensions
+    Creates an outer product possibility space 
+    given a number of differnt independent events 
+    accross differnt dimensions
 
 ARGS:
     DigitMaximums

@@ -4,7 +4,7 @@ import Library_StringExpressionToSympyExpression
 import sympy
 ExampleExpressionString = '(x0- .3)*(x0 + .2)*(x0 - .1)+100'
 SympyExpression = Library_StringExpressionToSympyExpression.Main(ExampleExpressionString)
-
+#TODO: add python native complex numbers to the mix
 
 ArgSetExpectedResultCombos = []
 ArgSetExpectedResultCombos.append(
