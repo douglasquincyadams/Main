@@ -80,6 +80,7 @@ import Library_AstropyFitsTablePrettyPrint
 
 import DS_EnergyDispersion as EnDisp
 
+import DS_EnergyDispersionFinal as EnDispFinal
 
 def Main(
     SourceEnergy=None,
@@ -122,7 +123,7 @@ def Main(
     minEnergy=WindowMinimumEnergy/2.
     MaxEnergy=WindowMaximumEnergy*2.
     NumberOfEnergyDivisions=100	
-    
+    """
     #Front of the Detector dispersion grid:
     SplineArray_f,Spline_ED_f = EnDisp.DataForSpline(
         LivetimeFile=LiveTimefile,
@@ -150,14 +151,30 @@ def Main(
         WhicArray='back',
         )
 
- 
+    """
+    Dic=EnDispFinal.FrontAndBackDispersion(LivetimeFile=LiveTimefile,
+                                EAFileFront=EAFile_f,
+                                EAFileBack=EAFile_b,
+                                DispersonFileFront=DispersonFile_f,
+                                DispersonFileBack=DispersonFile_b,
+                                Mchi=SourceEnergy,
+                                minEnergy=minEnergy,
+                                MaxEnergy=MaxEnergy,
+                                )
+
+    def EnergyDispersionFunction(
+        Energy = None,
+        ):
+        ProbabilityDensityValue=Dic['SplineWeightedDispersionArray'](Energy)
+        return ProbabilityDensityValue
+    """
     def EnergyDispersionFunction(
         Energy = None,
         ):
         #Average over the front and back detector
         ProbabilityDensityValue = 0.5*numpy.power(10,Spline_ED_b(Energy))+0.5*numpy.power(10,Spline_ED_f(Energy))           
         return ProbabilityDensityValue
-
+    """
     print '\n\n DONE GENERATING ENERGY DISPERION FUNCTION\n\n'
 
 

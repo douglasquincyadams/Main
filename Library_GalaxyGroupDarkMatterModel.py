@@ -19,7 +19,7 @@ import Const_LocalDirectoriesFermiFiles
 
 import DS_ReadingLiveTimeCube
 import Library_DataGetFermiInstrumentResponseSkyExposurePass7
-
+import Utility_masterConfig as configParam
 
 
 
@@ -28,20 +28,24 @@ def Main(
     GroupSourcesDataColumnNames = None,
     ReturnNormalizedFunction = False,
     PossibleWimpMass=None,
+    Halo_index=None,
     ):
 
     GalaxyGroupCount = len(GroupSourcesData)
 
     #Jfactor Means for all groups
-    BoostFactor=5.
-    GalaxyGroupJsmoothMeans = GroupSourcesData[:,[GroupSourcesDataColumnNames.index("Jsmooth")] ] * (1.9e26)*BoostFactor #sec*mev^2 / cm^5
+    BoostFactor=configParam.BoostFactor
+    ConfidenceLevel=configParam.ConfidenceLevel
+    GalaxyGroupJsmoothMeans = GroupSourcesData[:,[GroupSourcesDataColumnNames.index("Jsmooth")] ] * (1.9e26)*BoostFactor*ConfidenceLevel #sec*mev^2 / cm^5/(4*pi) have allowed for 2 photons per annihilation. See eq 3 of Han et al 2012
+    GalaxyGroupJsmoothMeans=GalaxyGroupJsmoothMeans[Halo_index]
 
     #Jfactor Variances for all groups
-    GalaxyGroupJsmoothVariances = (0.2)**2. * (GalaxyGroupJsmoothMeans**2.)
+    if configParam.GalaxyGroupVariance==None:
+        GalaxyGroupJsmoothVariances = (0.2)**2. * (GalaxyGroupJsmoothMeans**2.)
 
     #The position of the Clusters on the Sky
-    RA=GroupSourcesData[:,[GroupSourcesDataColumnNames.index(  "GalacticLongitudeInDegrees" )] ]
-    DEC=GroupSourcesData[:,[GroupSourcesDataColumnNames.index(  "GalacticLatitudeInDegrees" )] ]
+    RA=GroupSourcesData[:,[GroupSourcesDataColumnNames.index(  "GalacticLongitudeInDegrees" )] ][Halo_index]
+    DEC=GroupSourcesData[:,[GroupSourcesDataColumnNames.index(  "GalacticLatitudeInDegrees" )] ][Halo_index]
 
     #LiveTimeCube
     directoryofLivetimeCube= Const_LocalDirectoriesFermiFiles.DataFilesLiveTimeCubeDirectory

@@ -15,8 +15,8 @@ def ReadLiveTimeCubeHealpixFile(
         ):
     """Returns the heapix of the RA, DEC, and livetime in seconds spent at a given cosine on the sky"""
     hdulist=pyfits.open(filename)
-    print pyfits.info(filename)
-    print 'columns of the first data file',hdulist[1].columns
+    #print pyfits.info(filename)
+    #print 'columns of the first data file',hdulist[1].columns
     CosineLiveTimeData=hdulist[FileNumber].data['COSBINS']
     RAdata=hdulist[FileNumber].data['RA']
     DECdata=hdulist[FileNumber].data['DEC']
