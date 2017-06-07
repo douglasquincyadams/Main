@@ -93,6 +93,9 @@ def Main(
 
     EqualityCheckFunction = None,
 
+    StopAfterTestNumber = None,
+
+
     CheckArguments = True,
     PrintExtra = True,
     ):
@@ -110,6 +113,17 @@ def Main(
 
     k = 0
     for ArgSet, ExpectedResult in ArgSetExpectedResultCombos:
+
+        #To allow the user to prioritize only doing a few tests in the arg combo list -> 
+        #   Created stop count -> which allows only the first few tests to be run. 
+        #   In final commited codes, this should almost always be passed in as None
+        #   however when debugging specific tests,  
+        #   it can be annoying to allow all tests to run each time a small modification is made
+        #   to the library which is being debugged
+        if StopAfterTestNumber is not None:
+            if StopAfterTestNumber < k:
+                break
+
         print "-----------------------------------------------------------------"
         print "Running Test ", k
 
