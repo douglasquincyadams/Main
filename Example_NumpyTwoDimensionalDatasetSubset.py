@@ -4,8 +4,7 @@
 #   You can make a choice for any column before making anotehr choice for any otehr column.
 #   Avialiabe choices are the mathematical set of the datasetsubsets column values.
 #   Each time you make a choice - you can simply re-subset && re-setify the remaning column choices
-#   However -> I don't understand the purpose of building this into execl.
-#   Native excel funcitonality already allows for a filter to be added on top of a datset.
+
 
 
 
